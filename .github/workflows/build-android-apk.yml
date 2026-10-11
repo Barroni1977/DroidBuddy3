@@ -42,8 +42,9 @@ jobs:
       - name: Install Android SDK and NDK
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager \
+          sdkmanager_bin="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager"
+          yes | "${sdkmanager_bin}" --licenses >/dev/null || true
+          "${sdkmanager_bin}" \
             "platform-tools" \
             "platforms;android-37" \
             "build-tools;37.0.0" \
