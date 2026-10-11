@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<colors>
+	<color name="primary_background">FF033B58</color>
+	<color name="secondary_background">66006B9A</color>
+	<color name="dialog_tint">F20A1C29</color>
+	<color name="dialog_header_tint">FF045B82</color>
+	<color name="background">FF001725</color>
+	<color name="bg_image">FFFFFFFF</color>
+	<color name="bg_overlay">00FFFFFF</color>
+	<color name="black">FF000000</color>
+	<color name="white">FFF4FBFF</color>
+	<color name="grey">FF9EC9DD</color>
+	<color name="blue">FF00C8F5</color>
+	<color name="red">FFCE4421</color>
+	<color name="button_focus">FFFFBD12</color>
+	<color name="button_alt_focus">CC00A7D8</color>
+	<color name="text_shadow">CC00101A</color>
+	<color name="border_alpha">B300D9FF</color>
+	<color name="disabled">50FFFFFF</color>
+	<color name="selected">FFFFBD12</color>
+	<color name="invalid">FFFF4050</color>
+	<color name="DroidNavy">F2002033</color>
+	<color name="DroidBlue">D9085790</color>
+	<color name="DroidBlueFocus">F20B8DC5</color>
+	<color name="DroidCyan">FF00D9FF</color>
+	<color name="DroidGold">FFFFBD12</color>
+	<color name="DroidGoldSoft">D9B77B00</color>
+</colors>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+	<defaultcontrol always="true">104</defaultcontrol>
+	<backgroundcolor>DroidNavy</backgroundcolor>
+	<controls>
+		<control type="image">
+			<left>0</left><top>0</top><width>1920</width><height>1080</height>
+			<aspectratio>scale</aspectratio>
+			<texture>special://skin/media/droidbuddy3/home-bg.jpg</texture>
+		</control>
+		<control type="image">
+			<left>105</left><top>350</top><width>1710</width><height>600</height>
+			<texture border="36" colordiffuse="99001424">dialogs/dialog-bg-nobo.png</texture>
+		</control>
+
+		<!-- Row 1 -->
+		<control type="button" id="101">
+			<left>150</left><top>385</top><width>500</width><height>78</height>
+			<label>HELP &amp; INFO</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>103</onleft><onright>102</onright><onup>113</onup><ondown>104</ondown>
+			<onclick>ActivateWindow(SystemInfo)</onclick>
+		</control>
+		<control type="button" id="102">
+			<left>710</left><top>385</top><width>500</width><height>78</height>
+			<label>POWER</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidGoldSoft">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>101</onleft><onright>103</onright><onup>114</onup><ondown>105</ondown>
+			<onclick>ActivateWindow(ShutdownMenu)</onclick>
+		</control>
+		<control type="button" id="103">
+			<left>1270</left><top>385</top><width>500</width><height>78</height>
+			<label>RETRO ZONE</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>102</onleft><onright>101</onright><onup>115</onup><ondown>106</ondown>
+			<onclick>ActivateWindow(Games)</onclick>
+		</control>
+
+		<!-- Row 2 -->
+		<control type="button" id="104">
+			<left>150</left><top>495</top><width>500</width><height>78</height>
+			<label>MOVIES &amp; TV</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>106</onleft><onright>105</onright><onup>101</onup><ondown>107</ondown>
+			<onclick>ActivateWindow(Videos)</onclick>
+		</control>
+		<control type="button" id="105">
+			<left>710</left><top>495</top><width>500</width><height>78</height>
+			<label>MEDIA ADD-ONS</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>104</onleft><onright>106</onright><onup>102</onup><ondown>108</ondown>
+			<onclick>ActivateWindow(AddonBrowser)</onclick>
+		</control>
+		<control type="button" id="106">
+			<left>1270</left><top>495</top><width>500</width><height>78</height>
+			<label>SETTINGS</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>105</onleft><onright>104</onright><onup>103</onup><ondown>109</ondown>
+			<onclick>ActivateWindow(Settings)</onclick>
+		</control>
+
+		<!-- Row 3 -->
+		<control type="button" id="107">
+			<left>150</left><top>605</top><width>500</width><height>78</height>
+			<label>LIVE TV &amp; SPORTS</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>109</onleft><onright>108</onright><onup>104</onup><ondown>110</ondown>
+			<onclick>ActivateWindow(TVGuide)</onclick>
+		</control>
+		<control type="button" id="108">
+			<left>710</left><top>605</top><width>500</width><height>78</height>
+			<label>DROID BUDDY APPS</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>107</onleft><onright>109</onright><onup>105</onup><ondown>111</ondown>
+			<onclick>ActivateWindow(Programs)</onclick>
+		</control>
+		<control type="button" id="109">
+			<left>1270</left><top>605</top><width>500</width><height>78</height>
+			<label>APP LAUNCHER</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>108</onleft><onright>107</onright><onup>106</onup><ondown>112</ondown>
+			<onclick>ActivateWindow(Programs)</onclick>
+		</control>
+
+		<!-- Row 4 -->
+		<control type="button" id="110">
+			<left>150</left><top>715</top><width>500</width><height>78</height>
+			<label>KIDS &amp; FAMILY</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>112</onleft><onright>111</onright><onup>107</onup><ondown>113</ondown>
+			<onclick>ActivateWindow(Videos,library://video/,return)</onclick>
+		</control>
+		<control type="button" id="111">
+			<left>710</left><top>715</top><width>500</width><height>78</height>
+			<label>TOOLS</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>110</onleft><onright>112</onright><onup>108</onup><ondown>114</ondown>
+			<onclick>ActivateWindow(FileManager)</onclick>
+		</control>
+		<control type="button" id="112">
+			<left>1270</left><top>715</top><width>500</width><height>78</height>
+			<label>FAVOURITES</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>111</onleft><onright>110</onright><onup>109</onup><ondown>115</ondown>
+			<onclick>ActivateWindow(FavouritesBrowser)</onclick>
+		</control>
+
+		<!-- Row 5 -->
+		<control type="button" id="113">
+			<left>150</left><top>825</top><width>500</width><height>78</height>
+			<label>MUSIC</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>115</onleft><onright>114</onright><onup>110</onup><ondown>101</ondown>
+			<onclick>ActivateWindow(Music)</onclick>
+		</control>
+		<control type="button" id="114">
+			<left>710</left><top>825</top><width>500</width><height>78</height>
+			<label>NETWORK &amp; VPN</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>113</onleft><onright>115</onright><onup>111</onup><ondown>102</ondown>
+			<onclick>ActivateWindow(Settings,services)</onclick>
+		</control>
+		<control type="button" id="115">
+			<left>1270</left><top>825</top><width>500</width><height>78</height>
+			<label>WEATHER</label><font>font30</font><align>center</align><aligny>center</aligny>
+			<textcolor>white</textcolor><focusedcolor>black</focusedcolor>
+			<texturefocus border="30" colordiffuse="DroidGold">buttons/dialogbutton-fo.png</texturefocus>
+			<texturenofocus border="30" colordiffuse="DroidBlue">buttons/dialogbutton-nofo.png</texturenofocus>
+			<onleft>114</onleft><onright>113</onright><onup>112</onup><ondown>103</ondown>
+			<onclick>ActivateWindow(Weather)</onclick>
+		</control>
+
+		<control type="label">
+			<left>150</left><top>955</top><width>1620</width><height>40</height>
+			<label>DROID BUDDY 3  •  $INFO[System.Date]  •  $INFO[System.Time]</label>
+			<font>font13</font><align>center</align><textcolor>grey</textcolor>
+		</control>
+	</controls>
+</window>
