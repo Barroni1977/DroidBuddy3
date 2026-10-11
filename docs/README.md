@@ -1,12 +1,12 @@
-![Kodi Logo](resources/banner_slim.png)
+![DroidBuddy3 Logo](resources/banner_slim.png)
 
-# Kodi's Documentation Home
-Welcome to Kodi's documentation home. Geared at developers, it contains platform specific build guides, **[code guidelines](CODE_GUIDELINES.md)**, a **[git guide](GIT-FU.md)** streamlined for Kodi's workflow and Doxygen's resources, ready to generate **[code documentation](doxygen/README.md)**.
+# DroidBuddy3's Documentation Home
+Welcome to DroidBuddy3's documentation home. Geared at developers, it contains platform specific build guides, **[code guidelines](CODE_GUIDELINES.md)**, a **[git guide](GIT-FU.md)** streamlined for DroidBuddy3's workflow and Doxygen's resources, ready to generate **[code documentation](doxygen/README.md)**.
 
 If you haven't done so, we encourage you to read our **[contributing guide](CONTRIBUTING.md)** first. It contains pertinent information about our development model.
 
-## Building Kodi
-Kodi uses CMake as its building system but instructions are highly dependent on your operating system and target platform. Choose your platform below and read the guide carefully before proceeding.
+## Building DroidBuddy3
+DroidBuddy3 uses CMake as its building system but instructions are highly dependent on your operating system and target platform. Choose your platform below and read the guide carefully before proceeding.
 
 <p align="center">
   <a href="README.Android.md" title="Android"><img src="resources/android.svg" height="78"></a>

@@ -10,20 +10,20 @@ EXCLUDED_ADDONS =
 CMAKE_SOURCE_DIR = $(shell cd $(CURDIR)/../../..; pwd)
 APP_PACKAGE_DIR = $(subst .,/,@APP_PACKAGE@)
 
-ifeq ($(KODI_ANDROID_STORE_FILE),)
-export KODI_ANDROID_STORE_FILE:=$(HOME)/.android/debug.keystore
+ifeq ($(DROIDBUDDY3_ANDROID_STORE_FILE),)
+export DROIDBUDDY3_ANDROID_STORE_FILE:=$(HOME)/.android/debug.keystore
 endif
 
-ifeq ($(KODI_ANDROID_STORE_PASSWORD),)
-export KODI_ANDROID_STORE_PASSWORD:=android
+ifeq ($(DROIDBUDDY3_ANDROID_STORE_PASSWORD),)
+export DROIDBUDDY3_ANDROID_STORE_PASSWORD:=android
 endif
 
-ifeq ($(KODI_ANDROID_KEY_ALIAS),)
-export KODI_ANDROID_KEY_ALIAS:=androiddebugkey
+ifeq ($(DROIDBUDDY3_ANDROID_KEY_ALIAS),)
+export DROIDBUDDY3_ANDROID_KEY_ALIAS:=androiddebugkey
 endif
 
-ifeq ($(KODI_ANDROID_KEY_PASSWORD),)
-export KODI_ANDROID_KEY_PASSWORD:=android
+ifeq ($(DROIDBUDDY3_ANDROID_KEY_PASSWORD),)
+export DROIDBUDDY3_ANDROID_KEY_PASSWORD:=android
 endif
 
 # Gradle takes exclusive locks on its user home, so parallel builds that share

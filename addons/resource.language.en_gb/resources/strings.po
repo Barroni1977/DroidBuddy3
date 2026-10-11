@@ -71,7 +71,7 @@ msgstr ""
 #: xbmc/video/windows/GUIWindowVideoBase.cpp
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#6"
-msgid "Kodi GIT"
+msgid "DroidBuddy3 GIT"
 msgstr ""
 
 msgctxt "#7"
@@ -87,7 +87,7 @@ msgstr ""
 
 #: Unknown
 msgctxt "#9"
-msgid "Kodi media center"
+msgid "DroidBuddy3 media center"
 msgstr ""
 
 #empty string with id 10
@@ -2298,7 +2298,7 @@ msgid "Audio options"
 msgstr ""
 
 msgctxt "#482"
-msgid "About Kodi"
+msgid "About DroidBuddy3"
 msgstr ""
 
 #empty strings from id 483 to 484
@@ -6328,7 +6328,7 @@ msgstr ""
 #. Label of text box asking for donations
 #: addons/skin.estuary/xml/SettingsSystemInfo.xml
 msgctxt "#12397"
-msgid "Kodi is brought to you with love from the Kodi Foundation, a 501(c)(3) nonprofit organization. Thank you for using our software!"
+msgid "DroidBuddy3 is an independent media center based on Kodi. Thank you for using our software!"
 msgstr ""
 
 #. URL for donations. Do not translate.
@@ -7767,7 +7767,7 @@ msgstr ""
 #. Description of setting with label #13472 "HQ upscaler intermediate format"
 #: system/settings/settings.xml
 msgctxt "#13473"
-msgid "Sets the precision of the intermediate scaling buffer used in the GPU rendering path. 16 bit precision likely demands more performance. If the hardware is unable to support the selected format, Kodi will fall back to the next best format."
+msgid "Sets the precision of the intermediate scaling buffer used in the GPU rendering path. 16 bit precision likely demands more performance. If the hardware is unable to support the selected format, DroidBuddy3 will fall back to the next best format."
 msgstr ""
 
 #. Value of setting with label #13472 "HQ upscaler intermediate format"
@@ -8920,7 +8920,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#14282"
-msgid "Immediately remove unused images from the cache - images not associated with an item in the media library nor viewed recently. Kodi does this over time in the background."
+msgid "Immediately remove unused images from the cache - images not associated with an item in the media library nor viewed recently. DroidBuddy3 does this over time in the background."
 msgstr ""
 
 #empty strings from id 14283 to 14300
@@ -11051,7 +11051,7 @@ msgstr ""
 
 #. unused?
 msgctxt "#19209"
-msgid "Kodi virtual backend"
+msgid "DroidBuddy3 virtual backend"
 msgstr ""
 
 #. pvr channel manager "epg source" selector value
@@ -12636,7 +12636,7 @@ msgid "Screenshots"
 msgstr ""
 
 msgctxt "#20009"
-msgid "Use Kodi"
+msgid "Use DroidBuddy3"
 msgstr ""
 
 #empty string with id 20010
@@ -16772,7 +16772,7 @@ msgid "Incompatible add-ons"
 msgstr ""
 
 msgctxt "#24149"
-msgid "The following add-ons are incompatible with this version of Kodi and have been automatically disabled: {0:s}."
+msgid "The following add-ons are incompatible with this version of DroidBuddy3 and have been automatically disabled: {0:s}."
 msgstr ""
 
 #. Progress text on splash screen
@@ -16791,7 +16791,7 @@ msgstr ""
 #: xbmc/addons/AddonManager.cpp
 #: xbmc/addons/AddonDll.cpp
 msgctxt "#24152"
-msgid "The add-on is not compatible with this version of Kodi."
+msgid "The add-on is not compatible with this version of DroidBuddy3."
 msgstr ""
 
 #: system/settings/darwin_tvos.xml
@@ -16841,7 +16841,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#24162"
-msgid "Use Kodi virtual keyboard"
+msgid "Use DroidBuddy3 virtual keyboard"
 msgstr ""
 
 #: system/settings/darwin_tvos.xml
@@ -18127,7 +18127,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#34008"
-msgid "When you need to enter some text, Kodi virtual keyboard will show up instead of the built-in platform keyboard"
+msgid "When you need to enter some text, DroidBuddy3 virtual keyboard will show up instead of the built-in platform keyboard"
 msgstr ""
 
 #: system/settings/darwin_tvos.xml
@@ -19548,7 +19548,7 @@ msgstr ""
 #. Error message shown when trying to load a compressed savestate in an unsupported version of Kodi
 #: xbmc/games/dialogs/osd/DialogInGameSaves.cpp
 msgctxt "#35298"
-msgid "This savestate is compressed and can't be loaded by this version of Kodi."
+msgid "This savestate is compressed and can't be loaded by this version of DroidBuddy3."
 msgstr ""
 
 #. Shown when the achievements dialog is opened before the game has been identified
@@ -19560,13 +19560,13 @@ msgstr ""
 #. Shown when hardware rendering fails. {0:s} is the requested API/version, such as "OpenGL 4.3"; {1:s} is the available API, such as "OpenGL".
 #: xbmc/games/addons/GameClient.cpp
 msgctxt "#35300"
-msgid "Kodi couldn't initialize {0:s} rendering for this game. This display supports {1:s}."
+msgid "DroidBuddy3 couldn't initialize {0:s} rendering for this game. This display supports {1:s}."
 msgstr ""
 
 #. Shown when a game needs the graphics card directly but the display can't provide it
 #: xbmc/games/addons/GameClient.cpp
 msgctxt "#35301"
-msgid "Kodi couldn't initialize {0:s} rendering for this game on this display."
+msgid "DroidBuddy3 couldn't initialize {0:s} rendering for this game on this display."
 msgstr ""
 
 #. Help text for the hardcore mode setting
@@ -20231,7 +20231,7 @@ msgstr ""
 
 #: system/peripherals.xml
 msgctxt "#36046"
-msgid "Force AVR to wake up when Kodi is activated"
+msgid "Force AVR to wake up when DroidBuddy3 is activated"
 msgstr ""
 
 #: system/peripherals.xml
@@ -20676,7 +20676,7 @@ msgstr ""
 #. Description of setting with label #508 "Startup action"
 #: system/settings/settings.xml
 msgctxt "#36161"
-msgid "Select an action Kodi will perform on startup."
+msgid "Select an action DroidBuddy3 will perform on startup."
 msgstr ""
 
 #. Description of setting with label #13432 "Allow hardware acceleration (VideoToolbox)"
@@ -21433,7 +21433,7 @@ msgstr ""
 #. Description of setting with label #13436 "Adjust display HDR mode"
 #: system/settings/settings.xml
 msgctxt "#36299"
-msgid "Allow the HDR mode of the display to be changed to best match the media. When disabled, Kodi applies tonemapping if needed (and if supported on your hardware) to adapt the media to the current HDR mode of the display."
+msgid "Allow the HDR mode of the display to be changed to best match the media. When disabled, DroidBuddy3 applies tonemapping if needed (and if supported on your hardware) to adapt the media to the current HDR mode of the display."
 msgstr ""
 
 #. Description of setting with label #20226 "Movie set information folder"
@@ -22825,7 +22825,7 @@ msgstr ""
 #. Description of setting with label #36099 "Dither"
 #: system/settings/settings.xml
 msgctxt "#36598"
-msgid "Eliminate banding caused by RGB level conversion or other processing by adding a small amount of noise to the picture. This can be disabled for slower systems, or when Kodi is set to limited range RGB output and no video processing is needed."
+msgid "Eliminate banding caused by RGB level conversion or other processing by adding a small amount of noise to the picture. This can be disabled for slower systems, or when DroidBuddy3 is set to limited range RGB output and no video processing is needed."
 msgstr ""
 
 #. Description of setting with label #36100 "Dither depth"

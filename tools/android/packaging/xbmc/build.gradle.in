@@ -14,10 +14,10 @@ android {
     }
     signingConfigs {
         release {
-            keyAlias = System.getenv("KODI_ANDROID_KEY_ALIAS")
-            keyPassword = System.getenv("KODI_ANDROID_KEY_PASSWORD")
-            storeFile = file(System.getenv("KODI_ANDROID_STORE_FILE"))
-            storePassword = System.getenv("KODI_ANDROID_STORE_PASSWORD")
+            keyAlias = System.getenv("DROIDBUDDY3_ANDROID_KEY_ALIAS")
+            keyPassword = System.getenv("DROIDBUDDY3_ANDROID_KEY_PASSWORD")
+            storeFile = file(System.getenv("DROIDBUDDY3_ANDROID_STORE_FILE"))
+            storePassword = System.getenv("DROIDBUDDY3_ANDROID_STORE_PASSWORD")
             enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true
