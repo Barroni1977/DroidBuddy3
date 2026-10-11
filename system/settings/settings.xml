@@ -2310,7 +2310,7 @@
       <group id="1" label="13000">
         <setting id="services.devicename" type="string" label="1271" help="36321">
           <level>0</level>
-          <default>Kodi</default>
+          <default>DroidBuddy3</default>
           <control type="edit" format="string" />
         </setting>
       </group>
@@ -2363,7 +2363,7 @@
         </setting>
         <setting id="services.webserverusername" type="string" parent="services.webserver" label="1048" help="36330">
           <level>1</level>
-          <default>kodi</default>
+          <default>droidbuddy3</default>
           <updates>
             <update type="change" />
           </updates>
