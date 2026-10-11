@@ -1,6 +1,6 @@
-![Kodi Logo](../../docs/resources/banner_slim.png)
+![DroidBuddy3 Logo](../../docs/resources/banner_slim.png)
 
-# Kodi's Unified Depends Build System
+# DroidBuddy3's Unified Depends Build System
 This builds native tools and library dependencies for platforms that do not provide them. It is used on our continuous integration system, **[jenkins](http://jenkins.kodi.tv/)**. A nice side effect is that it allows us to use the same tools and library versions across all platforms.
 
 In terms of build system usage, largest percentage is Autotools, followed by CMake and, in rare cases, hand crafted Makefiles. Tools and libraries versions are picked for a reason. If you feel the urge to start bumping them, be prepared for robust testing. Some tools and libraries need patching, most do not.
@@ -16,7 +16,7 @@ Some authors do silly things and only a `config.site` can correct the errors. Wa
 * **Hand crafted Makefiles driven tools and libraries** typically require manual sed tweaks or patching. May give you nightmares.
 
 ## Usage Examples
-Paths below are examples. If you want to build Kodi, follow our **[build guides](../../docs/README.md)**.
+Paths below are examples. If you want to build DroidBuddy3, follow our **[build guides](../../docs/README.md)**.
 ### All platforms
 `./bootstrap`
 ### Darwin
@@ -30,7 +30,7 @@ Paths below are examples. If you want to build Kodi, follow our **[build guides]
 `./configure --host=aarch64-apple-darwin --with-platform=tvos`
 
 > [!NOTE]  
-> You can target the same `--prefix=` path. Each setup will be done in an isolated directory. The last configure/make you do is the one used for Kodi/Xcode.
+> You can target the same `--prefix=` path. Each setup will be done in an isolated directory. The last configure/make you do is the one used for DroidBuddy3/Xcode.
 
 ### Android
 **arm**
