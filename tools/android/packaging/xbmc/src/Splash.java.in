@@ -126,7 +126,7 @@ public class Splash extends Activity
           showInfoDialog(getString(R.string.networkperm_dialog, "@APP_NAME@"), AccessLocalNetworkPermission);
           break;
         case AccessLocalNetworkPermission:
-          requestPermissions(new String[]{Manifest.permission.ACCESS_LOCAL_NETWORK},
+          requestPermissions(new String[]{"android.permission.ACCESS_LOCAL_NETWORK"},
                              LOCAL_NETWORK_RESULT_CODE);
           break;
         case CheckingPermissions:
@@ -563,7 +563,7 @@ public class Splash extends Activity
     if (Build.VERSION.SDK_INT >= 37)
     {
       int permissionCheck;
-      permissionCheck = checkSelfPermission(Manifest.permission.ACCESS_LOCAL_NETWORK);
+      permissionCheck = checkSelfPermission("android.permission.ACCESS_LOCAL_NETWORK");
       if (permissionCheck == PERMISSION_GRANTED)
       {
         retVal &= true;
@@ -603,7 +603,7 @@ public class Splash extends Activity
       case LOCAL_NETWORK_RESULT_CODE:
       {
         int permissionCheck;
-        permissionCheck = checkSelfPermission(Manifest.permission.ACCESS_LOCAL_NETWORK);
+        permissionCheck = checkSelfPermission("android.permission.ACCESS_LOCAL_NETWORK");
         if (permissionCheck == PERMISSION_GRANTED) {
           mPermissionOK &= true;
           mStateMachine.sendEmptyMessage(CheckingPermissionsDone);

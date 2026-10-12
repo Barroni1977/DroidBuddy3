@@ -9,6 +9,8 @@ on:
       - .github/workflows/build-android-apk.yml
       - cmake/platform/android/android.cmake
       - tools/android/packaging/xbmc/build.gradle.in
+      - tools/android/packaging/xbmc/src/Splash.java.in
+      - media/applaunch_screen.png
 
 permissions:
   contents: write
