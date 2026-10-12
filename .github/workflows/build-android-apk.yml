@@ -8,6 +8,7 @@ on:
     paths:
       - .github/workflows/build-android-apk.yml
       - cmake/platform/android/android.cmake
+      - tools/android/packaging/xbmc/build.gradle.in
 
 permissions:
   contents: write
@@ -87,6 +88,16 @@ jobs:
             --prefix="${RUNNER_TEMP}/droidbuddy3-depends" \
             --enable-debug=no
 
+      - name: Cache Android dependency build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.temp }}/droidbuddy3-tarballs
+            ${{ runner.temp }}/droidbuddy3-depends
+            tools/depends/aarch64-linux-android-24-release
+            tools/depends/x86_64-linux-gnu-native
+          key: droidbuddy3-android-depends-r28c-api36-${{ hashFiles('tools/depends/target/**', 'tools/depends/native/**', 'tools/depends/configure.ac') }}
+
       - name: Build Android dependencies
         shell: bash
         run: make -C tools/depends -j"${BUILD_JOBS}"
@@ -103,7 +114,18 @@ jobs:
 
       - name: Package APK
         shell: bash
-        run: cmake --build build --target apk --parallel "${BUILD_JOBS}"
+        run: |
+          set -o pipefail
+          cmake --build build --target apk --parallel "${BUILD_JOBS}" 2>&1 | tee package-apk.log
+
+      - name: Upload packaging log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DroidBuddy3-packaging-log
+          path: package-apk.log
+          if-no-files-found: ignore
+          retention-days: 30
 
       - name: Collect APK
         id: package
