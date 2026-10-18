@@ -1,0 +1,80 @@
+[B]1.7.5[/B]
+• Added Kodi 21 compatibility by targeting the Omega skin API
+
+[B]1.7.4[/B]
+• Increased the Download History icon for final optical size matching
+
+[B]1.7.3[/B]
+• Increased the Download History icon to match the visual weight of Settings
+
+[B]1.7.2[/B]
+• Corrected the apparent size of the padded Download History icon
+
+[B]1.7.1[/B]
+• Centered DB3 card icons and labels with fixed Android-safe positioning
+• Added consistent selected-card text and icon coloring
+
+[B]1.7.0[/B]
+• Replaced the DB3 media panel with reliable static navigation controls
+• Removed all custom view-ID handling from the DB3 home screen
+• Kept Kodi's original Programs views untouched
+
+[B]1.6.0[/B]
+• Moved DB3 ROM Browser cards to a dedicated view so they no longer conflict with Programs
+• Restored the original Programs default view for other add-ons
+
+[B]1.5.2[/B]
+• Corrected the DB3 card panel to use Kodi's saved wide-list view identifier
+
+[B]1.5.1[/B]
+• Fixed a blank DB3 ROM Browser caused by Kodi restoring its saved Programs list view
+
+[B]1.5.0[/B]
+• Added a dedicated touch-friendly DB3 ROM Browser home screen
+• Added a centered 3+2 card layout with DB3 gold and cyan focus styling
+• Kept ROM search results and all other Programs add-ons on their normal views
+
+[B]0.8.5[/B]
+• Updated language files from Transifex
+
+[B]0.8.3[/B]
+• Updated language files from Transifex
+
+[B]0.8.2[/B]
+• Updated language files from Transifex
+
+[B]0.8.1[/B]
+• Updated language files from Transifex
+
+[B]0.7.13[/B]
+• Updated language files from Transifex
+
+[B]0.7.12[/B]
+• Updated language files from Transifex
+
+[B]0.7.11[/B]
+• Updated language files from Transifex
+
+[B]0.7.10[/B]
+• Updated language files from Transifex
+
+[B]0.7.8[/B]
+• Updated language files from Transifex
+
+[B]0.7.7[/B]
+• Updated language files from Transifex
+
+[B]0.7.3[/B]
+• Updated language files from Transifex
+
+[B]0.7.1[/B]
+• Updated language files from Transifex
+
+[B]0.6.2[/B]
+• Updated language files from Transifex
+
+[B]0.6.1[/B]
+• Updated language files from Transifex
+
+﻿[B]0.0.1[/B]
+• Initial commit

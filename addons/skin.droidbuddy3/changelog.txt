@@ -1,3 +1,6 @@
+[B]1.7.5[/B]
+• Added Kodi 21 compatibility by targeting the Omega skin API
+
 [B]1.7.4[/B]
 • Increased the Download History icon for final optical size matching
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="skin.droidbuddy3" version="1.7.5" name="Droid Buddy 3" provider-name="Droid Buddy; based on Estuary by Team Kodi">
+	<requires>
+		<import addon="xbmc.gui" version="5.17.0"/>
+	</requires>
+	<extension point="xbmc.gui.skin" debugging="false">
+		<res width="1920" height="1080" aspect="16:9" default="true" folder="xml"/>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<license>CC BY-SA 4.0, GNU GENERAL PUBLIC LICENSE Version 2.0</license>
+		<source>https://github.com/Barroni1977/DroidBuddy3</source>
+		<assets>
+			<icon>resources/icon.png</icon>
+			<fanart>resources/fanart.jpg</fanart>
+		</assets>
+		<summary lang="en_GB">Droid Buddy 3 media-centre skin</summary>
+		<summary lang="en_US">Droid Buddy 3 media-center skin</summary>
+		<description lang="en_GB">A remote-friendly three-column launcher in midnight navy, electric cyan and amber gold. Based on Team Kodi's Estuary skin for complete player, library and settings coverage.</description>
+		<description lang="en_US">A remote-friendly three-column launcher in midnight navy, electric cyan and amber gold. Based on Team Kodi's Estuary skin for complete player, library and settings coverage.</description>
+	</extension>
+</addon>
