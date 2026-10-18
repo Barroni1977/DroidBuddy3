@@ -18,7 +18,7 @@
 			<description lang="en_US">Official repository for the Droid Buddy 3 skin and DB3 ROM Browser.</description>
 		</extension>
 	</addon>
-	<addon id="skin.droidbuddy3" version="1.7.7" name="Droid Buddy 3" provider-name="Droid Buddy; based on Estuary by Team Kodi">
+	<addon id="skin.droidbuddy3" version="1.7.8" name="Droid Buddy 3" provider-name="Droid Buddy; based on Estuary by Team Kodi">
 		<requires>
 			<import addon="xbmc.gui" version="5.17.0"/>
 		</requires>

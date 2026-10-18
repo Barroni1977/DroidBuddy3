@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-	<defaultcontrol always="true">52</defaultcontrol>
-	<onload>SetFocus(5901)</onload>
+	<defaultcontrol always="true" condition="Control.IsVisible(5901)">5901</defaultcontrol>
+	<defaultcontrol always="true" condition="!Control.IsVisible(5901)">52</defaultcontrol>
 	<backgroundcolor>background</backgroundcolor>
 	<views>50,52,55,500</views>
 	<menucontrol>9000</menucontrol>

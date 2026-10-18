@@ -1,3 +1,6 @@
+[B]1.7.8[/B]
+• Uses Kodi conditional default controls for reliable DB3 and Programs focus
+
 [B]1.7.7[/B]
 • Applies DB3 card focus directly at window load to avoid plug-in timing differences
 
