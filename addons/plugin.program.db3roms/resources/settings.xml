@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+	<category label="30000">
+		<setting id="download_folder" type="folder" label="30001" default="special://profile/addon_data/plugin.program.db3roms/downloads/"/>
+		<setting id="page_size" type="number" label="30002" default="25"/>
+		<setting id="allowed_extensions" type="text" label="30003" default=".zip,.7z,.nes,.sfc,.smc,.gba,.gb,.gbc,.n64,.z64,.v64,.md,.gen,.sms,.gg,.pce,.cue,.chd,.iso,.bin,.wad,.a26,.a52,.a78,.lnx,.ngp,.ngc,.ws,.wsc,.col,.int,.rom"/>
+		<setting id="show_all_files" type="bool" label="30004" default="false"/>
+	</category>
+</settings>

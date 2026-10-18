@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addons>
+	<addon id="repository.droidbuddy3" name="Droid Buddy 3 Repository" version="1.0.0" provider-name="Barroni">
+		<extension point="xbmc.addon.repository" name="Droid Buddy 3 Add-on Repository">
+			<dir>
+				<info compressed="false">https://raw.githubusercontent.com/Barroni1977/DroidBuddy3/master/kodi-repo/addons.xml</info>
+				<checksum>https://raw.githubusercontent.com/Barroni1977/DroidBuddy3/master/kodi-repo/addons.xml.md5</checksum>
+				<datadir zip="true">https://raw.githubusercontent.com/Barroni1977/DroidBuddy3/master/kodi-repo/zips/</datadir>
+			</dir>
+		</extension>
+		<extension point="xbmc.addon.metadata">
+			<platform>all</platform>
+			<license>GPL-3.0-only</license>
+			<assets><icon>resources/icon.png</icon></assets>
+			<summary lang="en_GB">Install and update Droid Buddy 3 add-ons</summary>
+			<summary lang="en_US">Install and update Droid Buddy 3 add-ons</summary>
+			<description lang="en_GB">Official repository for the Droid Buddy 3 skin and DB3 ROM Browser.</description>
+			<description lang="en_US">Official repository for the Droid Buddy 3 skin and DB3 ROM Browser.</description>
+		</extension>
+	</addon>
+	<addon id="skin.droidbuddy3" version="1.7.4" name="Droid Buddy 3" provider-name="Droid Buddy; based on Estuary by Team Kodi">
+		<requires>
+			<import addon="xbmc.gui" version="5.18.0"/>
+		</requires>
+		<extension point="xbmc.gui.skin" debugging="false">
+			<res width="1920" height="1080" aspect="16:9" default="true" folder="xml"/>
+		</extension>
+		<extension point="xbmc.addon.metadata">
+			<platform>all</platform>
+			<license>CC BY-SA 4.0, GNU GENERAL PUBLIC LICENSE Version 2.0</license>
+			<source>https://github.com/Barroni1977/DroidBuddy3</source>
+			<assets>
+				<icon>resources/icon.png</icon>
+				<fanart>resources/fanart.jpg</fanart>
+			</assets>
+			<summary lang="en_GB">Droid Buddy 3 media-centre skin</summary>
+			<summary lang="en_US">Droid Buddy 3 media-center skin</summary>
+			<description lang="en_GB">A remote-friendly three-column launcher in midnight navy, electric cyan and amber gold. Based on Team Kodi's Estuary skin for complete player, library and settings coverage.</description>
+			<description lang="en_US">A remote-friendly three-column launcher in midnight navy, electric cyan and amber gold. Based on Team Kodi's Estuary skin for complete player, library and settings coverage.</description>
+		</extension>
+	</addon>
+	<addon id="plugin.program.db3roms" name="DB3 ROM Browser" version="0.1.3" provider-name="Droid Buddy 3">
+		<requires>
+			<import addon="xbmc.python" version="3.0.0"/>
+		</requires>
+		<extension point="xbmc.python.pluginsource" library="default.py">
+			<provides>executable</provides>
+		</extension>
+		<extension point="xbmc.addon.metadata">
+			<platform>all</platform>
+			<license>GPL-3.0-only</license>
+			<source>https://github.com/Barroni1977/DroidBuddy3</source>
+			<assets>
+				<icon>resources/icon.png</icon>
+				<fanart>resources/fanart.jpg</fanart>
+			</assets>
+			<summary lang="en_GB">Browse and download lawful ROM files from Internet Archive</summary>
+			<summary lang="en_US">Browse and download lawful ROM files from Internet Archive</summary>
+			<description lang="en_GB">Browse homebrew and public-domain software, search Internet Archive, inspect available ROM files and download them to a user-selected folder. Users are responsible for ensuring that they have permission to download each file.</description>
+			<description lang="en_US">Browse homebrew and public-domain software, search Internet Archive, inspect available ROM files and download them to a user-selected folder. Users are responsible for ensuring that they have permission to download each file.</description>
+		</extension>
+	</addon>
+</addons>

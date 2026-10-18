@@ -1084,4 +1084,21 @@
 			</control>
 		</control>
 	</include>
+	<!-- Droid Buddy 3 responsive launcher card. Coordinates are percentage-safe
+	     within the 1920x1080 canvas so Kodi can scale the same layout on phones. -->
+	<include name="DroidHomeCard">
+		<definition>
+			<control type="button" id="$PARAM[id]">
+				<left>$PARAM[left]</left><top>$PARAM[top]</top><width>520</width><height>82</height>
+				<label>$PARAM[label]</label><font>font30_title</font>
+				<align>center</align><aligny>center</aligny>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<texturefocus>droidbuddy3/home-card-focus.png</texturefocus>
+				<texturenofocus>droidbuddy3/home-card.png</texturenofocus>
+				<onleft>$PARAM[onleft]</onleft><onright>$PARAM[onright]</onright>
+				<onup>$PARAM[onup]</onup><ondown>$PARAM[ondown]</ondown>
+				<onclick>$PARAM[onclick]</onclick>
+			</control>
+		</definition>
+	</include>
 </includes>
