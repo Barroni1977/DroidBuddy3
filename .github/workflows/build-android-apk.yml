@@ -7,10 +7,16 @@ on:
       - master
     paths:
       - .github/workflows/build-android-apk.yml
+      - CMakeLists.txt
+      - addons/skin.droidbuddy3/**
       - cmake/platform/android/android.cmake
+      - media/applaunch_screen.png
+      - system/addon-manifest.xml
+      - system/settings/settings.xml
       - tools/android/packaging/xbmc/build.gradle.in
       - tools/android/packaging/xbmc/src/Splash.java.in
-      - media/applaunch_screen.png
+      - version.txt
+      - xbmc/platform/android/activity/XBMCApp.cpp
 
 permissions:
   contents: write
