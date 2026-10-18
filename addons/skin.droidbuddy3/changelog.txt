@@ -1,3 +1,6 @@
+[B]1.7.7[/B]
+• Applies DB3 card focus directly at window load to avoid plug-in timing differences
+
 [B]1.7.6[/B]
 • Focuses the Homebrew card when the DB3 ROM Browser opens for remote navigation
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
 	<defaultcontrol always="true">52</defaultcontrol>
-	<onload condition="String.IsEqual(Container.PluginName,plugin.program.db3roms) + String.IsEqual(Container.PluginCategory,DB3 ROM Browser)">SetFocus(5901)</onload>
+	<onload>SetFocus(5901)</onload>
 	<backgroundcolor>background</backgroundcolor>
 	<views>50,52,55,500</views>
 	<menucontrol>9000</menucontrol>
