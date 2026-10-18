@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window id="1199">
+	<defaultcontrol always="true">5901</defaultcontrol>
+	<backgroundcolor>background</backgroundcolor>
+	<views>50,52,55,500</views>
+	<menucontrol>9000</menucontrol>
+	<controls>
+		<control type="group">
+			<visible>false</visible>
+			<include>DefaultBackground</include>
+		</control>
+		<control type="group">
+			<visible>true</visible>
+			<include>DroidInternalBackground</include>
+		</control>
+		<control type="group">
+			<visible>false</visible>
+			<animation effect="fade" start="100" end="0" time="200" tween="sine" condition="$EXP[infodialog_active]">Conditional</animation>
+			<include>View_50_List</include>
+			<include>View_52_IconWall</include>
+			<include>View_55_WideList</include>
+			<include>View_500_Wall</include>
+			<control type="group">
+				<include>OpenClose_Left</include>
+				<include>Visible_Left</include>
+				<visible>Control.IsVisible(55)</visible>
+				<include>ListThumbInfoPanel</include>
+			</control>
+			<include content="TopBar">
+				<param name="breadcrumbs_label" value="$LOCALIZE[10001]" />
+			</include>
+			<include content="BottomBar">
+				<param name="info_visible" value="true" />
+			</include>
+			<include>CommonScrollbars</include>
+			<include>MediaMenuMouseOverlay</include>
+			<control type="group">
+				<include>MediaMenuCommon</include>
+				<control type="grouplist" id="9000">
+					<top>50</top>
+					<include>MediaMenuListCommon</include>
+					<control type="label" id="203">
+						<description>Actions</description>
+						<include>MediaMenuLabelCommon</include>
+						<label>$LOCALIZE[31020]</label>
+						<visible>Control.IsVisible(621)</visible>
+					</control>
+					<control type="button" id="624">
+						<include>MediaMenuItemsCommon</include>
+						<label>$LOCALIZE[10140]</label>
+						<onclick>Addon.OpenSettings($INFO[Container.PluginName])</onclick>
+						<visible>!String.IsEmpty(Container.PluginName)</visible>
+					</control>
+					<control type="button" id="621">
+						<description>Get more</description>
+						<include>MediaMenuItemsCommon</include>
+						<label>$LOCALIZE[21452]</label>
+						<onclick>ActivateWindow(addonbrowser,addons://more/executable/,return)</onclick>
+						<visible>Container.Content(addons)</visible>
+					</control>
+				</control>
+				<include>MediaMenuNowPlaying</include>
+			</control>
+		</control>
+		<control type="group">
+			<visible>true</visible>
+			<include>OpenClose_Right</include>
+			<control type="image">
+				<left>55</left><top>135</top><width>1810</width><height>825</height>
+				<texture border="36" colordiffuse="A8000B16">dialogs/dialog-bg-nobo.png</texture>
+			</control>
+			<!-- Touch-friendly header -->
+			<control type="button" id="799">
+				<left>40</left><top>14</top><width>190</width><height>76</height>
+				<label>BACK</label><font>font25_title</font>
+				<align>center</align><aligny>center</aligny>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<onclick>Action(Back)</onclick>
+				<texturefocus border="20">droidbuddy3/home-card-focus.png</texturefocus>
+				<texturenofocus border="20">droidbuddy3/home-card.png</texturenofocus>
+				<onright>798</onright><ondown>5901</ondown>
+			</control>
+			<control type="button" id="798">
+				<left>245</left><top>14</top><width>190</width><height>76</height>
+				<label>HOME</label><font>font25_title</font>
+				<align>center</align><aligny>center</aligny>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<onclick>ActivateWindow(Home)</onclick>
+				<texturefocus border="20">droidbuddy3/home-card-focus.png</texturefocus>
+				<texturenofocus border="20">droidbuddy3/home-card.png</texturenofocus>
+				<onleft>799</onleft><ondown>5901</ondown>
+			</control>
+			<control type="image">
+				<left>470</left><top>10</top><width>92</width><height>92</height>
+				<texture>special://skin/resources/icon.png</texture><aspectratio>keep</aspectratio>
+			</control>
+			<control type="label">
+				<left>585</left><top>8</top><width>875</width><height>55</height>
+				<label>[COLOR DroidGold]DB3[/COLOR] ROM BROWSER</label><font>font40_title</font>
+				<aligny>center</aligny><textcolor>white</textcolor>
+			</control>
+			<control type="label">
+				<left>590</left><top>60</top><width>870</width><height>35</height>
+				<label>HOMEBREW  &amp;  PUBLIC DOMAIN GAMES</label><font>font20_title</font>
+				<aligny>center</aligny><textcolor>grey</textcolor>
+			</control>
+			<control type="label">
+				<right>32</right><top>3</top><width>390</width><height>95</height>
+				<label>$INFO[System.Time]</label><font>font_clock_small</font>
+				<align>right</align><aligny>center</aligny><textcolor>white</textcolor>
+			</control>
+			<!-- Static controls avoid Kodi media-view conflicts on Android. -->
+			<control type="button" id="5901">
+				<left>160</left><top>188</top><width>500</width><height>300</height>
+				<label></label>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
+				<onclick>ActivateWindow(programs,plugin://plugin.program.db3roms/?action=homebrew,return)</onclick>
+				<onup>799</onup><onleft>5903</onleft><onright>5902</onright><ondown>5904</ondown>
+			</control>
+			<control type="button" id="5902">
+				<left>710</left><top>188</top><width>500</width><height>300</height>
+				<label></label>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
+				<onclick>ActivateWindow(programs,plugin://plugin.program.db3roms/?action=public_domain,return)</onclick>
+				<onup>799</onup><onleft>5901</onleft><onright>5903</onright><ondown>5904</ondown>
+			</control>
+			<control type="button" id="5903">
+				<left>1260</left><top>188</top><width>500</width><height>300</height>
+				<label></label>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
+				<onclick>ActivateWindow(programs,plugin://plugin.program.db3roms/?action=search,return)</onclick>
+				<onup>798</onup><onleft>5902</onleft><onright>5901</onright><ondown>5905</ondown>
+			</control>
+			<control type="button" id="5904">
+				<left>435</left><top>530</top><width>500</width><height>300</height>
+				<label></label>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
+				<onclick>ActivateWindow(programs,plugin://plugin.program.db3roms/?action=history,return)</onclick>
+				<onup>5901</onup><onleft>5905</onleft><onright>5905</onright><ondown>5901</ondown>
+			</control>
+			<control type="button" id="5905">
+				<left>985</left><top>530</top><width>500</width><height>300</height>
+				<label></label>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
+				<onclick>Addon.OpenSettings(plugin.program.db3roms)</onclick>
+				<onup>5903</onup><onleft>5904</onleft><onright>5904</onright><ondown>5902</ondown>
+			</control>
+			<control type="image"><left>346</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">droidbuddy3/settings-icons/games.png</texture><visible>!Control.HasFocus(5901)</visible></control>
+			<control type="image"><left>346</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">droidbuddy3/settings-icons/games.png</texture><visible>Control.HasFocus(5901)</visible></control>
+			<control type="image"><left>896</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">droidbuddy3/settings-icons/addons.png</texture><visible>!Control.HasFocus(5902)</visible></control>
+			<control type="image"><left>896</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">droidbuddy3/settings-icons/addons.png</texture><visible>Control.HasFocus(5902)</visible></control>
+			<control type="image"><left>1446</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">icons/search.png</texture><visible>!Control.HasFocus(5903)</visible></control>
+			<control type="image"><left>1446</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">icons/search.png</texture><visible>Control.HasFocus(5903)</visible></control>
+			<control type="image"><left>563</left><top>524</top><width>245</width><height>225</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">icons/sidemenu/download.png</texture><visible>!Control.HasFocus(5904)</visible></control>
+			<control type="image"><left>563</left><top>524</top><width>245</width><height>225</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">icons/sidemenu/download.png</texture><visible>Control.HasFocus(5904)</visible></control>
+			<control type="image"><left>1171</left><top>578</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">droidbuddy3/settings-icons/system.png</texture><visible>!Control.HasFocus(5905)</visible></control>
+			<control type="image"><left>1171</left><top>578</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">droidbuddy3/settings-icons/system.png</texture><visible>Control.HasFocus(5905)</visible></control>
+			<!-- Labels are separate from buttons so Android cannot alter their vertical alignment. -->
+			<control type="label"><left>160</left><top>375</top><width>500</width><height>58</height><label>HOMEBREW</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5901)</visible></control>
+			<control type="label"><left>160</left><top>375</top><width>500</width><height>58</height><label>HOMEBREW</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5901)</visible></control>
+			<control type="label"><left>710</left><top>375</top><width>500</width><height>58</height><label>PUBLIC DOMAIN</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5902)</visible></control>
+			<control type="label"><left>710</left><top>375</top><width>500</width><height>58</height><label>PUBLIC DOMAIN</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5902)</visible></control>
+			<control type="label"><left>1260</left><top>375</top><width>500</width><height>58</height><label>SEARCH ARCHIVE</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5903)</visible></control>
+			<control type="label"><left>1260</left><top>375</top><width>500</width><height>58</height><label>SEARCH ARCHIVE</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5903)</visible></control>
+			<control type="label"><left>435</left><top>717</top><width>500</width><height>58</height><label>DOWNLOAD HISTORY</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5904)</visible></control>
+			<control type="label"><left>435</left><top>717</top><width>500</width><height>58</height><label>DOWNLOAD HISTORY</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5904)</visible></control>
+			<control type="label"><left>985</left><top>717</top><width>500</width><height>58</height><label>SETTINGS</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5905)</visible></control>
+			<control type="label"><left>985</left><top>717</top><width>500</width><height>58</height><label>SETTINGS</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5905)</visible></control>
+			<control type="image"><left>130</left><top>954</top><width>520</width><height>2</height><texture colordiffuse="6600D9FF">colors/white.png</texture></control>
+			<control type="label"><left>650</left><top>931</top><width>620</width><height>48</height><label>INTERNET ARCHIVE  •  LEGAL HOMEBREW &amp; PUBLIC DOMAIN</label><font>font10</font><align>center</align><aligny>center</aligny><textcolor>grey</textcolor></control>
+			<control type="image"><left>1270</left><top>954</top><width>520</width><height>2</height><texture colordiffuse="6600D9FF">colors/white.png</texture></control>
+		</control>
+	</controls>
+</window>

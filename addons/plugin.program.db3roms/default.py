@@ -26,7 +26,7 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.1.3 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.1.4 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DATA_DIR = xbmcvfs.translatePath(
@@ -143,7 +143,7 @@ def show_root():
     add_action("Settings", "settings")
     finish()
     if xbmc.getSkinDir() == DB3_SKIN_ID:
-        xbmc.executebuiltin("SetFocus(5901)")
+        xbmc.executebuiltin("ActivateWindow(1199)")
 
 
 def search():

@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
-	<defaultcontrol always="true" condition="Control.IsVisible(5901)">5901</defaultcontrol>
-	<defaultcontrol always="true" condition="!Control.IsVisible(5901)">52</defaultcontrol>
+	<defaultcontrol always="true">52</defaultcontrol>
 	<backgroundcolor>background</backgroundcolor>
 	<views>50,52,55,500</views>
 	<menucontrol>9000</menucontrol>
 	<controls>
 		<control type="group">
-			<visible>!String.IsEqual(Container.PluginName,plugin.program.db3roms) | !String.IsEqual(Container.PluginCategory,DB3 ROM Browser)</visible>
+			<visible>true</visible>
 			<include>DefaultBackground</include>
 		</control>
 		<control type="group">
-			<visible>String.IsEqual(Container.PluginName,plugin.program.db3roms) + String.IsEqual(Container.PluginCategory,DB3 ROM Browser)</visible>
+			<visible>false</visible>
 			<include>DroidInternalBackground</include>
 		</control>
 		<control type="group">
-			<visible>!String.IsEqual(Container.PluginName,plugin.program.db3roms) | !String.IsEqual(Container.PluginCategory,DB3 ROM Browser)</visible>
+			<visible>true</visible>
 			<animation effect="fade" start="100" end="0" time="200" tween="sine" condition="$EXP[infodialog_active]">Conditional</animation>
 			<include>View_50_List</include>
 			<include>View_52_IconWall</include>
@@ -64,7 +63,7 @@
 			</control>
 		</control>
 		<control type="group">
-			<visible>String.IsEqual(Container.PluginName,plugin.program.db3roms) + String.IsEqual(Container.PluginCategory,DB3 ROM Browser)</visible>
+			<visible>false</visible>
 			<include>OpenClose_Right</include>
 			<control type="image">
 				<left>55</left><top>135</top><width>1810</width><height>825</height>

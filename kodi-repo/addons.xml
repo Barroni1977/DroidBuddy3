@@ -18,7 +18,7 @@
 			<description lang="en_US">Official repository for the Droid Buddy 3 skin and DB3 ROM Browser.</description>
 		</extension>
 	</addon>
-	<addon id="skin.droidbuddy3" version="1.7.8" name="Droid Buddy 3" provider-name="Droid Buddy; based on Estuary by Team Kodi">
+	<addon id="skin.droidbuddy3" version="1.8.0" name="Droid Buddy 3" provider-name="Droid Buddy; based on Estuary by Team Kodi">
 		<requires>
 			<import addon="xbmc.gui" version="5.17.0"/>
 		</requires>
@@ -39,7 +39,7 @@
 			<description lang="en_US">A remote-friendly three-column launcher in midnight navy, electric cyan and amber gold. Based on Team Kodi's Estuary skin for complete player, library and settings coverage.</description>
 		</extension>
 	</addon>
-	<addon id="plugin.program.db3roms" name="DB3 ROM Browser" version="0.1.3" provider-name="Droid Buddy 3">
+	<addon id="plugin.program.db3roms" name="DB3 ROM Browser" version="0.1.4" provider-name="Droid Buddy 3">
 		<requires>
 			<import addon="xbmc.python" version="3.0.0"/>
 		</requires>
