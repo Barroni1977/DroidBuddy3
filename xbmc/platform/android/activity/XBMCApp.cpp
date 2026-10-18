@@ -1737,8 +1737,13 @@ void CXBMCApp::onDisplayChanged(int displayId)
   CLog::Log(LOGDEBUG, "CXBMCApp::{}: id: {}", __FUNCTION__, displayId);
 
   if (!g_application.IsInitialized())
-    // Display mode has been changed during app startup; we want to reset audio engine on next ACTION_HDMI_AUDIO_PLUG event
+  {
+    // A display callback can arrive while the app is still starting. Defer display and DPI
+    // queries until the window system and input stack are fully initialized.
     m_aeReset = true;
+    m_displayChangeEvent.Set();
+    return;
+  }
 
   // Update display modes
   CWinSystemAndroid* winSystemAndroid = dynamic_cast<CWinSystemAndroid*>(CServiceBroker::GetWinSystem());
