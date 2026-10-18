@@ -36,9 +36,9 @@
 		<include content="DroidHomeCard">
 			<param name="id" value="103"/><param name="left" value="1260"/><param name="top" value="340"/>
 			<param name="iconleft" value="1293"/><param name="icontop" value="398"/>
-			<param name="label" value="RETRO ZONE"/><param name="icon" value="DefaultAddonGame.png"/>
+			<param name="label" value="DB3 ROM BROWSER"/><param name="icon" value="DefaultAddonGame.png"/>
 			<param name="onleft" value="102"/><param name="onright" value="101"/><param name="onup" value="115"/><param name="ondown" value="106"/>
-			<param name="onclick" value="ActivateWindow(Games)"/>
+			<param name="onclick" value="ActivateWindow(Programs,plugin://plugin.program.db3roms/,return)"/>
 		</include>
 
 		<!-- Row 2 -->

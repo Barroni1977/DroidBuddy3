@@ -1,3 +1,7 @@
+[B]1.8.1[/B]
+• Adds one-click DB3 ROM Browser access to the home screen
+• Corrects DB3 Back navigation by replacing its temporary plug-in window
+
 [B]1.8.0[/B]
 • Moves DB3 navigation into a dedicated window with fixed remote focus
 • Restores Kodi's standard Programs view behind the DB3 launcher
