@@ -1,3 +1,6 @@
+[B]1.8.2[/B]
+• Installs DB3 ROM Browser automatically as a required skin dependency
+
 [B]1.8.1[/B]
 • Adds one-click DB3 ROM Browser access to the home screen
 • Corrects DB3 Back navigation by replacing its temporary plug-in window
