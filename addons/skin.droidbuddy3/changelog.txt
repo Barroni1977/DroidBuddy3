@@ -1,3 +1,6 @@
+[B]1.7.6[/B]
+• Focuses the Homebrew card when the DB3 ROM Browser opens for remote navigation
+
 [B]1.7.5[/B]
 • Added Kodi 21 compatibility by targeting the Omega skin API
 
