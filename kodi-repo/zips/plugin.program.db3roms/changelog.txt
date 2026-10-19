@@ -1,3 +1,7 @@
+[B]0.3.3[/B]
+• Added Play game as the first action for every entry in My Games
+• Sends the selected ROM to Kodi GamePlayer for compatible emulator selection
+
 [B]0.3.2[/B]
 • Added Move downloaded file to each Download History item
 • Moves stay safely inside the managed ROM Library and update the saved history path

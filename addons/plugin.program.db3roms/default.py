@@ -30,7 +30,7 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.3.2 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.3.3 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
@@ -1149,8 +1149,8 @@ def show_game_item(path, system):
         notify("That game is outside the managed ROM Library.", error=True)
         return
     kind = storage.archive_type(path)
-    choices = ["File information"]
-    actions = ["info"]
+    choices = ["Play game", "File information"]
+    actions = ["play", "info"]
     if kind:
         choices.append("Extract archive")
         actions.append("extract")
@@ -1160,6 +1160,16 @@ def show_game_item(path, system):
     if selected < 0:
         return
     action = actions[selected]
+    if action == "play":
+        if not path_exists(path):
+            notify("That game file no longer exists.", error=True)
+            return
+        try:
+            xbmc.Player().play(path)
+        except RuntimeError as exc:
+            log("Could not start game: {}".format(exc), xbmc.LOGERROR)
+            notify("Kodi could not start this game.", error=True)
+        return
     if action == "info":
         try:
             size = int(xbmcvfs.Stat(path).st_size())
