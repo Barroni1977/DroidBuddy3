@@ -30,7 +30,7 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.3.1 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.3.2 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
@@ -645,6 +645,30 @@ def safe_delete_file(path):
         raise RuntimeError("Kodi could not delete {}.".format(os.path.basename(path)))
 
 
+def move_managed_file(source, destination):
+    root = xbmcvfs.translatePath(download_folder())
+    local_source = xbmcvfs.translatePath(source)
+    local_destination = xbmcvfs.translatePath(destination)
+    if not storage.is_within(root, local_source) or not storage.is_within(
+        root, local_destination
+    ):
+        raise RuntimeError("Files can only be moved inside the ROM Library.")
+    if os.path.realpath(local_source) == os.path.realpath(local_destination):
+        raise RuntimeError("That file is already in the selected folder.")
+    if not path_exists(source):
+        raise RuntimeError("The downloaded file no longer exists.")
+    parent = os.path.dirname(destination)
+    if parent:
+        xbmcvfs.mkdirs(parent)
+    if xbmcvfs.rename(source, destination):
+        return
+    if not xbmcvfs.copy(source, destination):
+        raise RuntimeError("Kodi could not copy the file to that folder.")
+    if not xbmcvfs.delete(source):
+        xbmcvfs.delete(destination)
+        raise RuntimeError("Kodi copied the file but could not remove the original.")
+
+
 def safe_delete_folder(path):
     root = xbmcvfs.translatePath(download_folder())
     local = xbmcvfs.translatePath(path)
@@ -1248,6 +1272,8 @@ def show_history_item(index):
     choices = ["Show file information"]
     actions = ["info"]
     if archive and path_exists(archive):
+        choices.append("Move downloaded file")
+        actions.append("move")
         choices.append("Delete downloaded archive")
         actions.append("archive")
     if extracted or entry.get("extracted_files"):
@@ -1269,6 +1295,42 @@ def show_history_item(index):
             "System: {}".format(entry.get("system") or "Other"),
         ]
         xbmcgui.Dialog().ok("Downloaded file", "\n".join(details))
+        return
+    if action == "move":
+        folder = select_destination(entry.get("system") or "Other")
+        if not folder:
+            return
+        destination = join_vfs(folder, os.path.basename(archive))
+        if path_exists(destination):
+            if os.path.realpath(xbmcvfs.translatePath(archive)) == os.path.realpath(
+                xbmcvfs.translatePath(destination)
+            ):
+                notify("That file is already in the selected folder.")
+                return
+            if not xbmcgui.Dialog().yesno(
+                ADDON_NAME,
+                "A file with that name already exists.",
+                "Replace it?",
+            ):
+                return
+            try:
+                safe_delete_file(destination)
+            except RuntimeError as exc:
+                notify(str(exc), error=True)
+                return
+        try:
+            move_managed_file(archive, destination)
+            entry["archive_path"] = destination
+            entry["destination"] = destination
+            if os.path.realpath(xbmcvfs.translatePath(folder)) != os.path.realpath(
+                xbmcvfs.translatePath(download_folder())
+            ):
+                entry["system"] = os.path.basename(folder.rstrip("/\\"))
+            save_history(history)
+            notify("File moved to {}.".format(os.path.basename(folder.rstrip("/\\"))))
+            xbmc.executebuiltin("Container.Refresh")
+        except RuntimeError as exc:
+            notify(str(exc), error=True)
         return
     if not xbmcgui.Dialog().yesno(
         ADDON_NAME,

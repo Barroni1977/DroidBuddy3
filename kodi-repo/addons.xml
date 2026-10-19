@@ -40,7 +40,7 @@
 			<description lang="en_US">A remote-friendly three-column launcher in midnight navy, electric cyan and amber gold. Based on Team Kodi's Estuary skin for complete player, library and settings coverage.</description>
 		</extension>
 	</addon>
-	<addon id="plugin.program.db3roms" name="DB3 ROM Browser" version="0.3.1" provider-name="Droid Buddy 3">
+	<addon id="plugin.program.db3roms" name="DB3 ROM Browser" version="0.3.2" provider-name="Droid Buddy 3">
 		<requires>
 			<import addon="xbmc.python" version="3.0.0"/>
 		</requires>
