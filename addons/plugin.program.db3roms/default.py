@@ -27,11 +27,12 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.2.0 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.2.1 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
-IA_LOGIN_URL = "https://archive.org/account/login.php"
+IA_LOGIN_URL = "https://archive.org/account/login"
+IA_ACCOUNT_URL = "https://archive.org/account/index.php?output=json"
 DATA_DIR = xbmcvfs.translatePath(
     "special://profile/addon_data/{}/".format(ADDON_ID)
 )
@@ -70,7 +71,22 @@ def session_is_signed_in(jar=None):
         for cookie in jar
         if not cookie.is_expired()
     }
-    return {"logged-in-user", "logged-in-sig"}.issubset(names)
+    return bool({"logged-in-user", "logged-in-sig"}.intersection(names))
+
+
+def verify_account(opener):
+    try:
+        with opener.open(
+            Request(
+                IA_ACCOUNT_URL,
+                headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
+            ),
+            timeout=25,
+        ) as response:
+            account = json.loads(response.read().decode("utf-8", "replace"))
+        return bool(isinstance(account, dict) and account.get("username"))
+    except (HTTPError, URLError, OSError, ValueError, json.JSONDecodeError):
+        return False
 
 
 def session_opener(jar=None):
@@ -112,17 +128,20 @@ def sign_in():
         with opener.open(
             Request(IA_LOGIN_URL, headers={"User-Agent": USER_AGENT}),
             timeout=25,
-        ):
-            pass
-        payload = urlencode(
+        ) as response:
+            login_page = response.read().decode("utf-8", "replace")
+        form = ia_client.hidden_form_fields(login_page)
+        form.update(
             {
                 "username": username,
                 "password": password,
                 "remember": "CHECKED",
-                "action": "login",
-                "submit": "Log in",
+                "referer": "https://archive.org/",
+                "login": "true",
+                "submit_by_js": "true",
             }
-        ).encode("utf-8")
+        )
+        payload = urlencode(form).encode("utf-8")
         with opener.open(
             Request(
                 IA_LOGIN_URL,
@@ -135,7 +154,7 @@ def sign_in():
             ),
             timeout=25,
         ) as response:
-            response.read()
+            login_result = response.read().decode("utf-8", "replace")
     except (HTTPError, URLError, OSError) as exc:
         log("Internet Archive sign-in failed: {}".format(exc), xbmc.LOGWARNING)
         update_account_status()
@@ -145,9 +164,21 @@ def sign_in():
         password = None
         payload = None
 
-    if not session_is_signed_in(jar):
+    accepted = session_is_signed_in(jar)
+    if not accepted:
+        try:
+            result = json.loads(login_result)
+            accepted = isinstance(result, dict) and result.get("status") == "ok"
+        except (ValueError, json.JSONDecodeError):
+            accepted = False
+    if accepted and not session_is_signed_in(jar):
+        accepted = verify_account(opener)
+    elif not accepted:
+        accepted = verify_account(opener)
+
+    if not accepted:
         update_account_status()
-        notify("Internet Archive did not accept those credentials.", error=True)
+        notify("Sign-in failed. Check the email and password in a web browser.", error=True)
         return
 
     xbmcvfs.mkdirs(DATA_DIR)

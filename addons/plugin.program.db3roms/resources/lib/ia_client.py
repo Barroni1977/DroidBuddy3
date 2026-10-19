@@ -35,6 +35,31 @@ class _TextExtractor(HTMLParser):
             self.parts.append(value)
 
 
+class _HiddenInputExtractor(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.values = {}
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() != "input":
+            return
+        values = {str(key).lower(): value for key, value in attrs}
+        if str(values.get("type") or "").lower() != "hidden":
+            return
+        name = values.get("name")
+        if name:
+            self.values[str(name)] = str(values.get("value") or "")
+
+
+def hidden_form_fields(html):
+    parser = _HiddenInputExtractor()
+    try:
+        parser.feed(str(html or ""))
+    except Exception:
+        return {}
+    return parser.values
+
+
 def strip_html(value):
     if isinstance(value, list):
         value = " ".join(str(part) for part in value)

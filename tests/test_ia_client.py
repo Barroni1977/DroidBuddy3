@@ -54,6 +54,17 @@ class InternetArchiveHelpersTest(unittest.TestCase):
         self.assertEqual(ia.strip_html("<p>Hello <b>world</b></p>"), "Hello world")
         self.assertEqual(ia.format_size(1048576), "1.0 MB")
 
+    def test_hidden_login_fields_are_preserved(self):
+        html = (
+            '<form><input value="token-value" name="csrf" type="hidden">'
+            '<input type="hidden" name="referer" value="/details/test">'
+            '<input type="text" name="username"></form>'
+        )
+        self.assertEqual(
+            ia.hidden_form_fields(html),
+            {"csrf": "token-value", "referer": "/details/test"},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

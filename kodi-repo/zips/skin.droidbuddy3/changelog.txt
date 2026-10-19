@@ -1,3 +1,6 @@
+[B]1.9.1[/B]
+• Requires DB3 ROM Browser 0.2.1 with the updated Internet Archive sign-in flow
+
 [B]1.9.0[/B]
 • Adds a green or red Internet Archive sign-in indicator to the DB3 header
 • Requires DB3 ROM Browser 0.2.0 for secure account-session support
