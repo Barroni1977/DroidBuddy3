@@ -27,7 +27,7 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.2.4 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.2.5 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
@@ -314,8 +314,11 @@ def search():
     ).strip()
     if not term:
         finish()
+        xbmc.executebuiltin("Action(Back)")
         return
-    show_results(ia_client.user_search_query(term), 1, 'Search: "{}"'.format(term))
+    target = plugin_url(action="search_results", term=term, page="1")
+    finish()
+    xbmc.executebuiltin("Container.Update({},replace)".format(target))
 
 
 def show_results(query, page, heading):
@@ -376,7 +379,7 @@ def show_results(query, page, heading):
     finish(view_mode=DB3_LIST_VIEW)
 
 
-def show_files(identifier, title, show_all=False):
+def show_files(identifier, title):
     xbmcplugin.setPluginCategory(HANDLE, title or identifier)
     xbmcplugin.setContent(HANDLE, "files")
     xbmc.executebuiltin("ActivateWindow(busydialognocancel)")
@@ -389,11 +392,10 @@ def show_files(identifier, title, show_all=False):
     finally:
         xbmc.executebuiltin("Dialog.Close(busydialognocancel)")
 
-    show_all = show_all or get_bool_setting("show_all_files")
     files = ia_client.filter_rom_files(
         metadata.get("files") or [],
         extensions=allowed_extensions(),
-        show_all=show_all,
+        show_all=True,
         allow_private=session_is_signed_in(),
     )
     thumb = ia_client.thumbnail_url(identifier)
@@ -414,14 +416,6 @@ def show_files(identifier, title, show_all=False):
             title=title,
         )
 
-    if not show_all:
-        add_folder(
-            "[B]Show all files in this item[/B]",
-            "files",
-            identifier=identifier,
-            title=title,
-            all="1",
-        )
     if not files:
         if session_is_signed_in():
             notify("No ROM files available to this signed-in account.")
@@ -605,6 +599,13 @@ def route():
         show_results(ia_client.public_domain_query(), 1, "Public domain")
     elif action == "search":
         search()
+    elif action == "search_results":
+        term = PARAMS.get("term", "").strip()
+        show_results(
+            ia_client.user_search_query(term),
+            int(PARAMS.get("page", "1")),
+            'Search: "{}"'.format(term),
+        )
     elif action == "browse":
         show_results(
             PARAMS.get("query", ""),
@@ -615,7 +616,6 @@ def route():
         show_files(
             PARAMS.get("identifier", ""),
             PARAMS.get("title", ""),
-            PARAMS.get("all") == "1",
         )
     elif action == "download":
         download(
