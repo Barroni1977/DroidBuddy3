@@ -5,10 +5,11 @@ import os
 import re
 import sys
 import time
+from http.cookiejar import MozillaCookieJar
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qsl, urlencode
-from urllib.request import Request, urlopen
+from urllib.request import HTTPCookieProcessor, Request, build_opener
 
 import xbmc
 import xbmcaddon
@@ -26,13 +27,16 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.1.5 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.2.0 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
+DB3_WINDOW_ID = 1199
+IA_LOGIN_URL = "https://archive.org/account/login.php"
 DATA_DIR = xbmcvfs.translatePath(
     "special://profile/addon_data/{}/".format(ADDON_ID)
 )
 HISTORY_PATH = DATA_DIR.rstrip("/\\") + "/history.json"
+SESSION_PATH = DATA_DIR.rstrip("/\\") + "/ia-session-cookies.txt"
 
 
 def log(message, level=xbmc.LOGINFO):
@@ -46,6 +50,127 @@ def plugin_url(**params):
 def notify(message, error=False):
     icon = xbmcgui.NOTIFICATION_ERROR if error else xbmcgui.NOTIFICATION_INFO
     xbmcgui.Dialog().notification(ADDON_NAME, message, icon, 5000)
+
+
+def load_session():
+    jar = MozillaCookieJar(SESSION_PATH)
+    if xbmcvfs.exists(SESSION_PATH):
+        try:
+            jar.load(ignore_discard=True, ignore_expires=False)
+        except (OSError, ValueError):
+            log("Internet Archive session could not be loaded.", xbmc.LOGWARNING)
+    return jar
+
+
+def session_is_signed_in(jar=None):
+    if jar is None:
+        jar = load_session()
+    names = {
+        cookie.name
+        for cookie in jar
+        if not cookie.is_expired()
+    }
+    return {"logged-in-user", "logged-in-sig"}.issubset(names)
+
+
+def session_opener(jar=None):
+    if jar is None:
+        jar = load_session()
+    return build_opener(HTTPCookieProcessor(jar)), jar
+
+
+def update_account_status(signed_in=None):
+    if signed_in is None:
+        signed_in = session_is_signed_in()
+    status = "signed-in" if signed_in else "signed-out"
+    ADDON.setSetting("ia_account_status", "Signed in" if signed_in else "Signed out")
+    try:
+        xbmcgui.Window(DB3_WINDOW_ID).setProperty("DB3AuthStatus", status)
+    except RuntimeError:
+        pass
+
+
+def sign_in():
+    username = xbmcgui.Dialog().input(
+        "Internet Archive email or username",
+        type=xbmcgui.INPUT_ALPHANUM,
+    ).strip()
+    if not username:
+        return
+    password = xbmcgui.Dialog().input(
+        "Internet Archive password",
+        type=xbmcgui.INPUT_ALPHANUM,
+        option=xbmcgui.ALPHANUM_HIDE_INPUT,
+    )
+    if not password:
+        return
+
+    jar = MozillaCookieJar(SESSION_PATH)
+    opener, _ = session_opener(jar)
+    payload = None
+    try:
+        with opener.open(
+            Request(IA_LOGIN_URL, headers={"User-Agent": USER_AGENT}),
+            timeout=25,
+        ):
+            pass
+        payload = urlencode(
+            {
+                "username": username,
+                "password": password,
+                "remember": "CHECKED",
+                "action": "login",
+                "submit": "Log in",
+            }
+        ).encode("utf-8")
+        with opener.open(
+            Request(
+                IA_LOGIN_URL,
+                data=payload,
+                headers={
+                    "User-Agent": USER_AGENT,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Referer": IA_LOGIN_URL,
+                },
+            ),
+            timeout=25,
+        ) as response:
+            response.read()
+    except (HTTPError, URLError, OSError) as exc:
+        log("Internet Archive sign-in failed: {}".format(exc), xbmc.LOGWARNING)
+        update_account_status()
+        notify("Could not sign in to Internet Archive.", error=True)
+        return
+    finally:
+        password = None
+        payload = None
+
+    if not session_is_signed_in(jar):
+        update_account_status()
+        notify("Internet Archive did not accept those credentials.", error=True)
+        return
+
+    xbmcvfs.mkdirs(DATA_DIR)
+    try:
+        jar.save(ignore_discard=True, ignore_expires=False)
+        try:
+            os.chmod(SESSION_PATH, 0o600)
+        except OSError:
+            pass
+    except OSError as exc:
+        log("Internet Archive session could not be saved: {}".format(exc), xbmc.LOGERROR)
+        update_account_status(False)
+        notify("Signed in, but Kodi could not save the session.", error=True)
+        return
+    update_account_status(True)
+    notify("Signed in to Internet Archive.")
+
+
+def sign_out():
+    if xbmcvfs.exists(SESSION_PATH):
+        xbmcvfs.delete(SESSION_PATH)
+    update_account_status(False)
+    notify("Signed out of Internet Archive.")
 
 
 def get_bool_setting(setting_id):
@@ -74,8 +199,9 @@ def request_json(url):
             "Accept": "application/json",
         },
     )
+    opener, _ = session_opener()
     try:
-        with urlopen(request, timeout=25) as response:
+        with opener.open(request, timeout=25) as response:
             return json.loads(response.read().decode("utf-8", "replace"))
     except HTTPError as exc:
         log("HTTP {} for {}".format(exc.code, url), xbmc.LOGERROR)
@@ -143,6 +269,7 @@ def show_root():
     add_action("Settings", "settings")
     finish()
     if xbmc.getSkinDir() == DB3_SKIN_ID:
+        update_account_status()
         xbmc.executebuiltin("ReplaceWindow(1199)")
 
 
@@ -232,6 +359,7 @@ def show_files(identifier, title, show_all=False):
         metadata.get("files") or [],
         extensions=allowed_extensions(),
         show_all=show_all,
+        allow_private=session_is_signed_in(),
     )
     thumb = ia_client.thumbnail_url(identifier)
     for entry in files:
@@ -260,7 +388,10 @@ def show_files(identifier, title, show_all=False):
             all="1",
         )
     if not files:
-        notify("No matching ROM files were found in this item.")
+        if session_is_signed_in():
+            notify("No ROM files available to this signed-in account.")
+        else:
+            notify("No public direct ROM files found. The item may require sign-in.")
     finish(view_mode=DB3_LIST_VIEW)
 
 
@@ -346,12 +477,13 @@ def download(identifier, filename, title, expected_size=0):
 
     url = ia_client.download_url(identifier, remote_filename)
     request = Request(url, headers={"User-Agent": USER_AGENT})
+    opener, _ = session_opener()
     progress = xbmcgui.DialogProgress()
     progress.create(ADDON_NAME, "Starting {}".format(filename))
     output = None
     downloaded = 0
     try:
-        with urlopen(request, timeout=30) as response:
+        with opener.open(request, timeout=30) as response:
             total = int(response.headers.get("Content-Length") or expected_size or 0)
             output = xbmcvfs.File(partial, "w")
             while True:
@@ -468,6 +600,10 @@ def route():
     elif action == "settings":
         ADDON.openSettings()
         finish()
+    elif action == "login":
+        sign_in()
+    elif action == "logout":
+        sign_out()
     else:
         notify("Unknown add-on action.", error=True)
         finish(False)

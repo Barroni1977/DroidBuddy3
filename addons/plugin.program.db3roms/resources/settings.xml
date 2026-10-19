@@ -6,4 +6,9 @@
 		<setting id="allowed_extensions" type="text" label="30003" default=".zip,.7z,.nes,.sfc,.smc,.gba,.gb,.gbc,.n64,.z64,.v64,.md,.gen,.sms,.gg,.pce,.cue,.chd,.iso,.bin,.wad,.a26,.a52,.a78,.lnx,.ngp,.ngc,.ws,.wsc,.col,.int,.rom"/>
 		<setting id="show_all_files" type="bool" label="30004" default="false"/>
 	</category>
+	<category label="30020">
+		<setting id="ia_account_status" type="text" label="30021" default="Signed out" enable="false"/>
+		<setting type="action" label="30022" action="RunPlugin(plugin://plugin.program.db3roms/?action=login)" option="close"/>
+		<setting type="action" label="30023" action="RunPlugin(plugin://plugin.program.db3roms/?action=logout)" option="close"/>
+	</category>
 </settings>

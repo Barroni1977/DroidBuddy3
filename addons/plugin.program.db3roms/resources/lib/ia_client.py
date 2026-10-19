@@ -112,11 +112,15 @@ def parse_extensions(value):
     return tuple(entries) or DEFAULT_EXTENSIONS
 
 
-def filter_rom_files(files, extensions=DEFAULT_EXTENSIONS, show_all=False):
+def filter_rom_files(
+    files, extensions=DEFAULT_EXTENSIONS, show_all=False, allow_private=False
+):
     extensions = tuple(ext.lower() for ext in extensions)
     output = []
     for entry in files or []:
-        if not isinstance(entry, dict) or entry.get("private"):
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("private") and not allow_private:
             continue
         name = str(entry.get("name") or "").strip()
         if not name or name.endswith("/"):

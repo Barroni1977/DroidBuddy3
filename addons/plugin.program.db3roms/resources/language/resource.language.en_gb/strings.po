@@ -54,3 +54,19 @@ msgstr ""
 msgctxt "#30016"
 msgid "Show all files in this item"
 msgstr ""
+
+msgctxt "#30020"
+msgid "Internet Archive account"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Status"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Sign in to Internet Archive"
+msgstr ""
+
+msgctxt "#30023"
+msgid "Sign out of Internet Archive"
+msgstr ""

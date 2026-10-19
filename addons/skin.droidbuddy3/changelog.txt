@@ -1,3 +1,7 @@
+[B]1.9.0[/B]
+• Adds a green or red Internet Archive sign-in indicator to the DB3 header
+• Requires DB3 ROM Browser 0.2.0 for secure account-session support
+
 [B]1.8.2[/B]
 • Installs DB3 ROM Browser automatically as a required skin dependency
 

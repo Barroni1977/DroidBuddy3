@@ -109,6 +109,18 @@
 				<label>$INFO[System.Time]</label><font>font_clock_small</font>
 				<align>right</align><aligny>center</aligny><textcolor>white</textcolor>
 			</control>
+			<control type="label">
+				<right>32</right><top>76</top><width>440</width><height>30</height>
+				<label>[COLOR FF36D17C]●[/COLOR]  INTERNET ARCHIVE: SIGNED IN</label><font>font12</font>
+				<align>right</align><aligny>center</aligny><textcolor>white</textcolor>
+				<visible>String.IsEqual(Window(1199).Property(DB3AuthStatus),signed-in)</visible>
+			</control>
+			<control type="label">
+				<right>32</right><top>76</top><width>440</width><height>30</height>
+				<label>[COLOR FFFF5252]●[/COLOR]  INTERNET ARCHIVE: SIGNED OUT</label><font>font12</font>
+				<align>right</align><aligny>center</aligny><textcolor>white</textcolor>
+				<visible>!String.IsEqual(Window(1199).Property(DB3AuthStatus),signed-in)</visible>
+			</control>
 			<!-- Static controls avoid Kodi media-view conflicts on Android. -->
 			<control type="button" id="5901">
 				<left>160</left><top>188</top><width>500</width><height>300</height>

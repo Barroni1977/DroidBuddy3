@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="skin.droidbuddy3" version="1.8.2" name="Droid Buddy 3" provider-name="Droid Buddy; based on Estuary by Team Kodi">
+<addon id="skin.droidbuddy3" version="1.9.0" name="Droid Buddy 3" provider-name="Droid Buddy; based on Estuary by Team Kodi">
 	<requires>
 		<import addon="xbmc.gui" version="5.17.0"/>
-		<import addon="plugin.program.db3roms" version="0.1.5"/>
+		<import addon="plugin.program.db3roms" version="0.2.0"/>
 	</requires>
 	<extension point="xbmc.gui.skin" debugging="false">
 		<res width="1920" height="1080" aspect="16:9" default="true" folder="xml"/>
