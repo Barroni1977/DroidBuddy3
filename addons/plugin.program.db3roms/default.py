@@ -27,11 +27,12 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.2.2 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.2.3 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
-IA_LOGIN_URL = "https://archive.org/account/login"
+IA_CSRF_URL = "https://archive.org/services/csrf-token"
+IA_LOGIN_URL = "https://archive.org/services/account/login/"
 IA_ACCOUNT_URL = "https://archive.org/account/index.php?output=json"
 DATA_DIR = xbmcvfs.translatePath(
     "special://profile/addon_data/{}/".format(ADDON_ID)
@@ -124,38 +125,44 @@ def sign_in():
     jar = MozillaCookieJar(SESSION_PATH)
     opener, _ = session_opener(jar)
     payload = None
+    login_data = None
+    result = {}
     try:
         with opener.open(
-            Request(IA_LOGIN_URL, headers={"User-Agent": USER_AGENT}),
+            Request(
+                IA_CSRF_URL,
+                headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
+            ),
             timeout=25,
         ) as response:
-            login_page = response.read().decode("utf-8", "replace")
-        form = ia_client.hidden_form_fields(login_page)
-        form.update(
-            {
-                "username": username,
-                "password": password,
-                "remember": "CHECKED",
-                "referer": "https://archive.org/",
-                "login": "true",
-                "submit_by_js": "true",
-            }
-        )
-        payload = urlencode(form).encode("utf-8")
+            token_result = json.loads(response.read().decode("utf-8", "replace"))
+        token = (token_result.get("value") or {}).get("token")
+        if not token_result.get("success") or not token:
+            raise ValueError("Internet Archive did not return a login token.")
+        login_data = {
+            "username": username,
+            "password": password,
+            "remember": "true",
+            "t": token,
+        }
+        payload = json.dumps(login_data).encode("utf-8")
         with opener.open(
             Request(
                 IA_LOGIN_URL,
                 data=payload,
                 headers={
                     "User-Agent": USER_AGENT,
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Referer": IA_LOGIN_URL,
+                    "Accept": "application/json",
+                    "Content-Type": "application/json; charset=utf-8",
+                    "X-Csrf-Token": token,
+                    "Origin": "https://archive.org",
+                    "Referer": "https://archive.org/account/login",
                 },
             ),
             timeout=25,
         ) as response:
-            login_result = response.read().decode("utf-8", "replace")
-    except (HTTPError, URLError, OSError) as exc:
+            result = json.loads(response.read().decode("utf-8", "replace"))
+    except (HTTPError, URLError, OSError, ValueError, json.JSONDecodeError) as exc:
         log("Internet Archive sign-in failed: {}".format(exc), xbmc.LOGWARNING)
         update_account_status()
         notify("Could not sign in to Internet Archive.", error=True)
@@ -163,17 +170,10 @@ def sign_in():
     finally:
         password = None
         payload = None
+        login_data = None
 
-    accepted = session_is_signed_in(jar)
-    if not accepted:
-        try:
-            result = json.loads(login_result)
-            accepted = isinstance(result, dict) and result.get("status") == "ok"
-        except (ValueError, json.JSONDecodeError):
-            accepted = False
+    accepted = bool(isinstance(result, dict) and result.get("success"))
     if accepted and not session_is_signed_in(jar):
-        accepted = verify_account(opener)
-    elif not accepted:
         accepted = verify_account(opener)
 
     if not accepted:
