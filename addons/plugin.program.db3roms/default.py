@@ -30,7 +30,7 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.3.3 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.3.4 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
@@ -562,6 +562,157 @@ def select_destination(system):
     return folder
 
 
+def library_manifest(root):
+    files = []
+    stack = [(root, "")]
+    while stack:
+        current, relative_root = stack.pop()
+        directories, filenames = xbmcvfs.listdir(current)
+        for filename in filenames:
+            relative = "/".join(
+                value for value in (relative_root, filename) if value
+            )
+            source = join_vfs(current, filename)
+            try:
+                size = int(xbmcvfs.Stat(source).st_size())
+            except Exception:
+                size = 0
+            files.append((source, relative, size))
+        for dirname in directories:
+            name = dirname.rstrip("/\\")
+            if not name or name in (".", ".."):
+                continue
+            relative = "/".join(
+                value for value in (relative_root, name) if value
+            )
+            stack.append((join_vfs(current, name), relative))
+    return files
+
+
+def remove_empty_library_tree(root):
+    try:
+        directories, _ = xbmcvfs.listdir(root)
+    except Exception:
+        return
+    for dirname in directories:
+        child = join_vfs(root, dirname.rstrip("/\\"))
+        remove_empty_library_tree(child)
+        try:
+            xbmcvfs.rmdir(child)
+        except Exception:
+            pass
+
+
+def migrate_saved_paths(old_root, new_root):
+    history = load_history()
+    for entry in history:
+        for key in ("destination", "archive_path", "extracted_path"):
+            entry[key] = storage.rebase_path(entry.get(key, ""), old_root, new_root)
+        entry["extracted_files"] = [
+            storage.rebase_path(path, old_root, new_root)
+            for path in (entry.get("extracted_files") or [])
+        ]
+    save_history(history)
+    state = folder_state()
+    for key, value in list(state.items()):
+        if isinstance(value, str):
+            state[key] = storage.rebase_path(value, old_root, new_root)
+    save_json_file(FOLDER_STATE_PATH, state)
+
+
+def migrate_rom_library():
+    old_root = download_folder().rstrip("/\\")
+    dialog = xbmcgui.Dialog()
+    try:
+        parent = dialog.browseSingle(
+            0, "Choose a parent folder for DB3 ROMs", "files", "", False, False, ""
+        )
+    except (AttributeError, TypeError):
+        parent = dialog.browse(
+            0, "Choose a parent folder for DB3 ROMs", "files", "", False, False, ""
+        )
+    if not parent:
+        return
+    parent = xbmcvfs.translatePath(parent).rstrip("/\\")
+    new_root = join_vfs(parent, "DB3 ROMs")
+    old_local = os.path.realpath(xbmcvfs.translatePath(old_root))
+    new_local = os.path.realpath(xbmcvfs.translatePath(new_root))
+    if old_local == new_local:
+        notify("The ROM Library is already in that location.")
+        return
+    if storage.is_within(old_local, new_local) or storage.is_within(
+        new_local, old_local
+    ):
+        notify("Choose a folder outside the current ROM Library.", error=True)
+        return
+    if path_exists(new_root):
+        directories, files = xbmcvfs.listdir(new_root)
+        if directories or files:
+            notify("The destination DB3 ROMs folder must be empty.", error=True)
+            return
+    manifest = library_manifest(old_root)
+    total_size = sum(item[2] for item in manifest)
+    if not enough_space(parent, total_size):
+        notify("There is not enough free storage for the ROM Library.", error=True)
+        return
+    if not dialog.yesno(
+        ADDON_NAME,
+        "Move {} file(s) to {}?".format(len(manifest), new_root),
+        "Originals are removed only after every copy is verified.",
+    ):
+        return
+    if not xbmcvfs.mkdirs(new_root) and not path_exists(new_root):
+        notify("Kodi could not create the destination folder.", error=True)
+        return
+    progress = xbmcgui.DialogProgress()
+    progress.create(ADDON_NAME, "Moving ROM Library")
+    copied = []
+    completed = 0
+    try:
+        for source, relative, size in manifest:
+            if progress.iscanceled():
+                raise InterruptedError("Migration cancelled.")
+            destination = join_vfs(new_root, relative)
+            xbmcvfs.mkdirs(os.path.dirname(destination))
+            if not xbmcvfs.copy(source, destination):
+                xbmcvfs.delete(destination)
+                raise RuntimeError("Kodi could not copy {}.".format(relative))
+            copied.append((source, destination))
+            try:
+                copied_size = int(xbmcvfs.Stat(destination).st_size())
+            except Exception:
+                copied_size = -1
+            if copied_size != size:
+                raise RuntimeError("Verification failed for {}.".format(relative))
+            completed += size
+            percent = int(completed * 100 / total_size) if total_size else 100
+            progress.update(min(percent, 100), relative)
+    except (InterruptedError, RuntimeError) as exc:
+        for _, destination in reversed(copied):
+            xbmcvfs.delete(destination)
+        remove_empty_library_tree(new_root)
+        xbmcvfs.rmdir(new_root)
+        notify(str(exc), error=not isinstance(exc, InterruptedError))
+        return
+    finally:
+        progress.close()
+    undeleted = 0
+    for source, _ in copied:
+        if path_exists(source) and not xbmcvfs.delete(source):
+            undeleted += 1
+    ADDON.setSetting("download_folder", new_root.rstrip("/\\") + "/")
+    migrate_saved_paths(old_root, new_root)
+    ensure_system_folders(force=True)
+    remove_empty_library_tree(old_root)
+    if undeleted:
+        notify(
+            "Library moved, but {} old file(s) could not be removed.".format(undeleted),
+            error=True,
+        )
+    else:
+        notify("ROM Library moved to {}.".format(new_root))
+
+
 def folder_manager():
     choice = xbmcgui.Dialog().select(
         "ROM folder manager",
@@ -570,9 +721,13 @@ def folder_manager():
             "Rename folder",
             "Delete empty folder",
             "Create/repair standard system folders",
+            "Move entire ROM Library",
         ),
     )
     if choice < 0:
+        return
+    if choice == 4:
+        migrate_rom_library()
         return
     root, names = managed_folders()
     if choice == 0:
@@ -1445,6 +1600,9 @@ def route():
         finish()
     elif action == "folder_manager":
         folder_manager()
+        finish()
+    elif action == "migrate_library":
+        migrate_rom_library()
         finish()
     elif action == "settings":
         ADDON.openSettings()

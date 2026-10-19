@@ -33,6 +33,20 @@ class StorageHelpersTest(unittest.TestCase):
         self.assertFalse(storage.is_game_file("cover.jpg"))
         self.assertFalse(storage.is_game_file("notes.txt"))
 
+    def test_library_paths_can_be_rebased_after_migration(self):
+        self.assertEqual(
+            storage.rebase_path(
+                "/old/roms/Mega Drive/Sonic.md",
+                "/old/roms/",
+                "/storage/Download/DB3 ROMs/",
+            ),
+            "/storage/Download/DB3 ROMs/Mega Drive/Sonic.md",
+        )
+        self.assertEqual(
+            storage.rebase_path("/somewhere/game.md", "/old/roms", "/new/roms"),
+            "/somewhere/game.md",
+        )
+
     def test_archive_members_cannot_escape_destination(self):
         self.assertEqual(storage.safe_archive_member("folder/game.rom"), "folder/game.rom")
         self.assertEqual(storage.safe_archive_member("../outside.rom"), "")

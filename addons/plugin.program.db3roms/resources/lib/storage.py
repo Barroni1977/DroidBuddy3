@@ -72,6 +72,21 @@ def is_game_file(filename):
     return bool(name and name.endswith(GAME_EXTENSIONS))
 
 
+def rebase_path(path, old_root, new_root):
+    value = str(path or "")
+    old = str(old_root or "").rstrip("/\\")
+    new = str(new_root or "").rstrip("/\\")
+    if not value or not old or not new:
+        return value
+    if value == old:
+        return new
+    for separator in ("/", "\\"):
+        prefix = old + separator
+        if value.startswith(prefix):
+            return new + "/" + value[len(prefix):].replace("\\", "/")
+    return value
+
+
 def archive_folder_name(filename):
     name = safe_component(filename, "Extracted game")
     for extension in ARCHIVE_EXTENSIONS:

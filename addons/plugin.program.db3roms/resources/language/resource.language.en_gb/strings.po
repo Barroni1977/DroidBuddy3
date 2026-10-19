@@ -35,6 +35,10 @@ msgctxt "#30006"
 msgid "Manage ROM folders"
 msgstr ""
 
+msgctxt "#30007"
+msgid "Move entire ROM Library"
+msgstr ""
+
 msgctxt "#30010"
 msgid "Homebrew"
 msgstr ""

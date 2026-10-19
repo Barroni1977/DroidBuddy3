@@ -5,6 +5,7 @@
 		<setting id="page_size" type="number" label="30002" default="25"/>
 		<setting id="delete_archive_after_extract" type="bool" label="30005" default="false"/>
 		<setting type="action" label="30006" action="RunPlugin(plugin://plugin.program.db3roms/?action=folder_manager)" option="close"/>
+		<setting type="action" label="30007" action="RunPlugin(plugin://plugin.program.db3roms/?action=migrate_library)" option="close"/>
 	</category>
 	<category label="30020">
 		<setting id="ia_account_status" type="text" label="30021" default="Signed out" enable="false"/>

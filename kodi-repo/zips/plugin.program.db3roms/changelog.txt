@@ -1,3 +1,9 @@
+[B]0.3.4[/B]
+• Added a safe Move entire ROM Library tool for shared Fire TV storage
+• Creates a dedicated DB3 ROMs folder while preserving system subfolders
+• Verifies every copied file before removing originals
+• Updates download history, saved destinations and all future downloads
+
 [B]0.3.3[/B]
 • Added Play game as the first action for every entry in My Games
 • Sends the selected ROM to Kodi GamePlayer for compatible emulator selection
