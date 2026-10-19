@@ -1,3 +1,6 @@
+[B]1.9.4[/B]
+• Keeps the Internet Archive signed-in indicator in sync when the DB3 window opens or returns from settings
+
 [B]1.9.3[/B]
 • Requires DB3 ROM Browser 0.2.3 with Internet Archive's current CSRF-protected login service
 

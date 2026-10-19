@@ -27,7 +27,7 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.2.3 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.2.4 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
@@ -101,6 +101,10 @@ def update_account_status(signed_in=None):
         signed_in = session_is_signed_in()
     status = "signed-in" if signed_in else "signed-out"
     ADDON.setSetting("ia_account_status", "Signed in" if signed_in else "Signed out")
+    try:
+        xbmcgui.Window(10000).setProperty("DB3AuthStatus", status)
+    except RuntimeError:
+        pass
     try:
         xbmcgui.Window(DB3_WINDOW_ID).setProperty("DB3AuthStatus", status)
     except RuntimeError:
