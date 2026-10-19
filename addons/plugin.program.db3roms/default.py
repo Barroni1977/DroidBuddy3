@@ -3,12 +3,15 @@
 import json
 import os
 import re
+import shutil
+import stat
 import sys
 import time
+import zipfile
 from http.cookiejar import MozillaCookieJar
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
-from urllib.parse import parse_qsl, urlencode
+from urllib.parse import parse_qsl, quote, urlencode
 from urllib.request import HTTPCookieProcessor, Request, build_opener
 
 import xbmc
@@ -17,7 +20,7 @@ import xbmcgui
 import xbmcplugin
 import xbmcvfs
 
-from resources.lib import ia_client
+from resources.lib import ia_client, storage
 
 
 ADDON = xbmcaddon.Addon()
@@ -27,7 +30,7 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.2.5 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.3.0 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
@@ -39,6 +42,7 @@ DATA_DIR = xbmcvfs.translatePath(
 )
 HISTORY_PATH = DATA_DIR.rstrip("/\\") + "/history.json"
 SESSION_PATH = DATA_DIR.rstrip("/\\") + "/ia-session-cookies.txt"
+FOLDER_STATE_PATH = DATA_DIR.rstrip("/\\") + "/folders.json"
 
 
 def log(message, level=xbmc.LOGINFO):
@@ -444,6 +448,406 @@ def join_vfs(folder, filename):
     return folder.rstrip("/\\") + "/" + filename
 
 
+def path_exists(path):
+    return bool(path and (xbmcvfs.exists(path) or os.path.exists(path)))
+
+
+def load_json_file(path, fallback):
+    if not xbmcvfs.exists(path):
+        return fallback
+    handle = None
+    try:
+        handle = xbmcvfs.File(path)
+        content = handle.read()
+        return json.loads(content) if content else fallback
+    except Exception as exc:
+        log("Could not load {}: {}".format(path, exc), xbmc.LOGWARNING)
+        return fallback
+    finally:
+        if handle:
+            handle.close()
+
+
+def save_json_file(path, value):
+    xbmcvfs.mkdirs(DATA_DIR)
+    handle = None
+    try:
+        handle = xbmcvfs.File(path, "w")
+        handle.write(json.dumps(value, ensure_ascii=False, indent=2))
+        return True
+    except Exception as exc:
+        log("Could not save {}: {}".format(path, exc), xbmc.LOGWARNING)
+        return False
+    finally:
+        if handle:
+            handle.close()
+
+
+def ensure_system_folders(force=False):
+    root = download_folder()
+    state = folder_state()
+    if state.get("_standard_folders_ready") and not force:
+        return root
+    for name in storage.DEFAULT_SYSTEM_FOLDERS:
+        folder = join_vfs(root, name)
+        if not xbmcvfs.exists(folder):
+            xbmcvfs.mkdirs(folder)
+    state["_standard_folders_ready"] = True
+    save_json_file(FOLDER_STATE_PATH, state)
+    return root
+
+
+def managed_folders():
+    root = ensure_system_folders()
+    directories, _ = xbmcvfs.listdir(root)
+    names = sorted(
+        (name.rstrip("/\\") for name in directories), key=str.lower
+    )
+    return root, [name for name in names if name and name not in (".", "..")]
+
+
+def folder_state():
+    value = load_json_file(FOLDER_STATE_PATH, {})
+    return value if isinstance(value, dict) else {}
+
+
+def remember_folder(system, folder):
+    state = folder_state()
+    state[str(system or "Other")] = folder
+    save_json_file(FOLDER_STATE_PATH, state)
+
+
+def create_managed_folder(root=None):
+    root = root or download_folder()
+    name = xbmcgui.Dialog().input(
+        "New ROM folder name", type=xbmcgui.INPUT_ALPHANUM
+    ).strip()
+    if not name:
+        return ""
+    name = storage.safe_component(name, "")
+    if not name:
+        notify("That folder name is not valid.", error=True)
+        return ""
+    folder = join_vfs(root, name)
+    if xbmcvfs.exists(folder):
+        notify("That folder already exists.", error=True)
+        return folder
+    if not xbmcvfs.mkdirs(folder):
+        notify("Kodi could not create that folder.", error=True)
+        return ""
+    notify("Created {}".format(name))
+    return folder
+
+
+def select_destination(system):
+    root, names = managed_folders()
+    paths = [root] + [join_vfs(root, name) for name in names]
+    labels = ["ROM Library root"] + names + ["Create a new folder…"]
+    preferred = folder_state().get(system) or join_vfs(root, system)
+    try:
+        preselect = paths.index(preferred)
+    except ValueError:
+        preselect = 0
+    selected = xbmcgui.Dialog().select(
+        "Choose destination for {}".format(system), labels, preselect=preselect
+    )
+    if selected < 0:
+        return ""
+    if selected == len(labels) - 1:
+        folder = create_managed_folder(root)
+    else:
+        folder = paths[selected]
+    if folder:
+        remember_folder(system, folder)
+    return folder
+
+
+def folder_manager():
+    choice = xbmcgui.Dialog().select(
+        "ROM folder manager",
+        (
+            "Create folder",
+            "Rename folder",
+            "Delete empty folder",
+            "Create/repair standard system folders",
+        ),
+    )
+    if choice < 0:
+        return
+    root, names = managed_folders()
+    if choice == 0:
+        create_managed_folder(root)
+        return
+    if choice == 3:
+        ensure_system_folders(force=True)
+        notify("Standard system folders are ready.")
+        return
+    selected = xbmcgui.Dialog().select(
+        "Choose folder", names
+    )
+    if selected < 0:
+        return
+    old_path = join_vfs(root, names[selected])
+    if choice == 1:
+        new_name = xbmcgui.Dialog().input(
+            "Rename ROM folder", defaultt=names[selected],
+            type=xbmcgui.INPUT_ALPHANUM,
+        ).strip()
+        new_name = storage.safe_component(new_name, "")
+        if not new_name:
+            return
+        new_path = join_vfs(root, new_name)
+        if path_exists(new_path):
+            notify("That folder already exists.", error=True)
+        elif xbmcvfs.rename(old_path, new_path):
+            state = folder_state()
+            for key, value in list(state.items()):
+                if value == old_path:
+                    state[key] = new_path
+            save_json_file(FOLDER_STATE_PATH, state)
+            notify("Folder renamed.")
+        else:
+            notify("Kodi could not rename that folder.", error=True)
+        return
+    directories, files = xbmcvfs.listdir(old_path)
+    if directories or files:
+        notify("Only empty folders can be deleted.", error=True)
+        return
+    if xbmcgui.Dialog().yesno(ADDON_NAME, "Delete empty folder {}?".format(names[selected])):
+        if xbmcvfs.rmdir(old_path):
+            notify("Folder deleted.")
+        else:
+            notify("Kodi could not delete that folder.", error=True)
+
+
+def enough_space(folder, required):
+    if not required:
+        return True
+    try:
+        local = xbmcvfs.translatePath(folder)
+        while local and not os.path.exists(local):
+            parent = os.path.dirname(local)
+            if parent == local:
+                break
+            local = parent
+        free = shutil.disk_usage(local).free
+        return free >= int(required) + (32 * 1024 * 1024)
+    except (OSError, ValueError):
+        return True
+
+
+def safe_delete_file(path):
+    root = xbmcvfs.translatePath(download_folder())
+    local = xbmcvfs.translatePath(path)
+    if not storage.is_within(root, local):
+        raise RuntimeError("Refusing to delete a file outside the ROM Library.")
+    if path_exists(path) and not xbmcvfs.delete(path):
+        raise RuntimeError("Kodi could not delete {}.".format(os.path.basename(path)))
+
+
+def safe_delete_folder(path):
+    root = xbmcvfs.translatePath(download_folder())
+    local = xbmcvfs.translatePath(path)
+    if not storage.is_within(root, local):
+        raise RuntimeError("Refusing to delete a folder outside the ROM Library.")
+    if not path_exists(path):
+        return
+    try:
+        shutil.rmtree(local)
+    except OSError as exc:
+        raise RuntimeError("Could not delete extracted folder: {}".format(exc))
+
+
+def cleanup_empty_parents(path, stop):
+    current = os.path.dirname(xbmcvfs.translatePath(path))
+    stop = os.path.realpath(xbmcvfs.translatePath(stop))
+    while current and storage.is_within(stop, current):
+        try:
+            os.rmdir(current)
+        except OSError:
+            break
+        current = os.path.dirname(current)
+
+
+def zip_manifest(archive_path, extraction_folder):
+    manifest = []
+    total = 0
+    with zipfile.ZipFile(xbmcvfs.translatePath(archive_path)) as archive:
+        for info in archive.infolist():
+            relative = storage.safe_archive_member(info.filename)
+            if not relative:
+                if info.filename.rstrip("/\\"):
+                    raise RuntimeError("The archive contains an unsafe file path.")
+                continue
+            unix_type = (info.external_attr >> 16) & 0o170000
+            if unix_type == stat.S_IFLNK:
+                raise RuntimeError("Symbolic links are not extracted for safety.")
+            destination = join_vfs(extraction_folder, relative)
+            manifest.append((info, destination))
+            if not info.is_dir():
+                total += int(info.file_size or 0)
+    return manifest, total
+
+
+def extract_zip(archive_path, extraction_folder):
+    manifest, required = zip_manifest(archive_path, extraction_folder)
+    if not enough_space(extraction_folder, required):
+        raise RuntimeError("There is not enough free storage for this archive.")
+    conflicts = [destination for info, destination in manifest
+                 if not info.is_dir() and path_exists(destination)]
+    if conflicts and not xbmcgui.Dialog().yesno(
+        ADDON_NAME,
+        "{} extracted file(s) already exist.".format(len(conflicts)),
+        "Overwrite them?",
+    ):
+        raise InterruptedError("Extraction cancelled.")
+    progress = xbmcgui.DialogProgress()
+    progress.create(ADDON_NAME, "Extracting {}".format(os.path.basename(archive_path)))
+    extracted = []
+    completed = 0
+    try:
+        xbmcvfs.mkdirs(extraction_folder)
+        with zipfile.ZipFile(xbmcvfs.translatePath(archive_path)) as archive:
+            for info, destination in manifest:
+                if progress.iscanceled():
+                    raise InterruptedError("Extraction cancelled.")
+                if info.is_dir():
+                    xbmcvfs.mkdirs(destination)
+                    continue
+                if info.flag_bits & 0x1:
+                    raise RuntimeError("Encrypted ZIP files are not supported.")
+                parent = os.path.dirname(destination)
+                if parent:
+                    xbmcvfs.mkdirs(parent)
+                with archive.open(info) as source, open(
+                    xbmcvfs.translatePath(destination), "wb"
+                ) as output:
+                    shutil.copyfileobj(source, output, 256 * 1024)
+                extracted.append(destination)
+                completed += int(info.file_size or 0)
+                percent = int(completed * 100 / required) if required else 0
+                progress.update(min(percent, 100), info.filename)
+    except Exception:
+        for path in reversed(extracted):
+            try:
+                xbmcvfs.delete(path)
+            except Exception:
+                pass
+        raise
+    finally:
+        progress.close()
+    return extracted
+
+
+def archive_vfs_roots(archive_path, kind):
+    encoded = quote(xbmcvfs.translatePath(archive_path).replace("\\", "/"), safe="")
+    if kind == "rar":
+        return ("rar://{}/".format(encoded), "archive://{}/".format(encoded))
+    return ("archive://{}/".format(encoded),)
+
+
+def vfs_child(root, relative, directory=False):
+    parts = [quote(part, safe="") for part in relative.split("/") if part]
+    value = root + "/".join(parts)
+    return value.rstrip("/") + "/" if directory else value
+
+
+def vfs_archive_manifest(root, relative=""):
+    current = vfs_child(root, relative, directory=True) if relative else root
+    directories, files = xbmcvfs.listdir(current)
+    manifest = []
+    for filename in files:
+        safe_name = storage.safe_archive_member(filename)
+        if not safe_name:
+            raise RuntimeError("The archive contains an unsafe file name.")
+        child = "/".join(value for value in (relative, safe_name) if value)
+        source = vfs_child(root, child)
+        try:
+            size = int(xbmcvfs.Stat(source).st_size())
+        except Exception:
+            size = 0
+        manifest.append((source, child, size))
+    for dirname in directories:
+        safe_name = storage.safe_archive_member(dirname.rstrip("/\\"))
+        if not safe_name:
+            raise RuntimeError("The archive contains an unsafe folder name.")
+        child = "/".join(value for value in (relative, safe_name) if value)
+        manifest.extend(vfs_archive_manifest(root, child))
+    return manifest
+
+
+def extract_vfs_archive(archive_path, extraction_folder, kind):
+    manifest = []
+    for root in archive_vfs_roots(archive_path, kind):
+        try:
+            manifest = vfs_archive_manifest(root)
+        except Exception:
+            manifest = []
+        if manifest:
+            break
+    if not manifest:
+        if not xbmc.getCondVisibility("System.HasAddon(vfs.libarchive)"):
+            if xbmcgui.Dialog().yesno(
+                ADDON_NAME,
+                "RAR and 7z extraction needs Kodi's Archive support.",
+                "Install it now?",
+            ):
+                xbmc.executebuiltin("InstallAddon(vfs.libarchive)", wait=True)
+        raise RuntimeError(
+            "Kodi could not open this {} archive. Install or enable VFS Archive Support."
+            .format(kind.upper())
+        )
+    required = sum(item[2] for item in manifest)
+    if not enough_space(extraction_folder, required):
+        raise RuntimeError("There is not enough free storage for this archive.")
+    conflicts = [join_vfs(extraction_folder, relative)
+                 for _, relative, _ in manifest
+                 if path_exists(join_vfs(extraction_folder, relative))]
+    if conflicts and not xbmcgui.Dialog().yesno(
+        ADDON_NAME,
+        "{} extracted file(s) already exist.".format(len(conflicts)),
+        "Overwrite them?",
+    ):
+        raise InterruptedError("Extraction cancelled.")
+    progress = xbmcgui.DialogProgress()
+    progress.create(ADDON_NAME, "Extracting {}".format(os.path.basename(archive_path)))
+    extracted = []
+    copied = 0
+    try:
+        xbmcvfs.mkdirs(extraction_folder)
+        for source, relative, size in manifest:
+            if progress.iscanceled():
+                raise InterruptedError("Extraction cancelled.")
+            destination = join_vfs(extraction_folder, relative)
+            xbmcvfs.mkdirs(os.path.dirname(destination))
+            if path_exists(destination):
+                xbmcvfs.delete(destination)
+            if not xbmcvfs.copy(source, destination):
+                raise RuntimeError("Kodi could not extract {}.".format(relative))
+            extracted.append(destination)
+            copied += size
+            percent = int(copied * 100 / required) if required else 0
+            progress.update(min(percent, 100), relative)
+    except Exception:
+        for path in reversed(extracted):
+            try:
+                xbmcvfs.delete(path)
+            except Exception:
+                pass
+        raise
+    finally:
+        progress.close()
+    return extracted
+
+
+def extract_archive(archive_path, extraction_folder, kind):
+    if kind == "zip":
+        return extract_zip(archive_path, extraction_folder)
+    if kind in ("rar", "7z"):
+        return extract_vfs_archive(archive_path, extraction_folder, kind)
+    raise RuntimeError("This file type cannot be extracted.")
+
+
 def load_history():
     if not xbmcvfs.exists(HISTORY_PATH):
         return []
@@ -473,15 +877,24 @@ def save_history(entries):
             handle.close()
 
 
-def record_download(identifier, title, filename, destination, size):
+def record_download(
+    identifier, title, filename, destination, size, system="Other",
+    extracted_path="", extracted_files=None, extraction_shared=False,
+):
     history = load_history()
     history.insert(
         0,
         {
+            "id": str(time.time_ns()),
             "identifier": identifier,
             "title": title,
             "filename": filename,
             "destination": destination,
+            "archive_path": destination,
+            "system": system,
+            "extracted_path": extracted_path,
+            "extracted_files": list(extracted_files or []),
+            "extraction_shared": bool(extraction_shared),
             "size": int(size or 0),
             "downloaded_at": datetime.now(timezone.utc).isoformat(),
         },
@@ -492,9 +905,40 @@ def record_download(identifier, title, filename, destination, size):
 def download(identifier, filename, title, expected_size=0):
     remote_filename = filename
     filename = safe_filename(remote_filename)
-    folder = download_folder()
+    archive_kind = storage.archive_type(filename)
+    extract_requested = False
+    if archive_kind:
+        selected = xbmcgui.Dialog().select(
+            filename,
+            ("Download only", "Download and extract"),
+        )
+        if selected < 0:
+            return
+        extract_requested = selected == 1
+    system = storage.infer_system(title, filename, identifier)
+    folder = select_destination(system)
+    if not folder:
+        return
     destination = join_vfs(folder, filename)
     partial = destination + ".part"
+    extraction_folder = ""
+    extraction_shared = False
+    if extract_requested:
+        suggested = storage.archive_folder_name(filename)
+        extraction_choice = xbmcgui.Dialog().select(
+            "Choose extraction layout",
+            (
+                "Extract into new folder: {}".format(suggested),
+                "Extract directly into {}".format(os.path.basename(folder) or "destination"),
+            ),
+        )
+        if extraction_choice < 0:
+            return
+        extraction_shared = extraction_choice == 1
+        extraction_folder = folder if extraction_shared else join_vfs(folder, suggested)
+    if not enough_space(folder, expected_size):
+        notify("There is not enough free storage for this download.", error=True)
+        return
     if xbmcvfs.exists(destination):
         overwrite = xbmcgui.Dialog().yesno(
             ADDON_NAME,
@@ -538,8 +982,41 @@ def download(identifier, filename, title, expected_size=0):
             xbmcvfs.delete(destination)
         if not xbmcvfs.rename(partial, destination):
             raise RuntimeError("Kodi could not move the completed file.")
-        record_download(identifier, title, filename, destination, downloaded)
-        notify("Downloaded {}".format(filename))
+        progress.close()
+        extracted_files = []
+        if extract_requested:
+            try:
+                extracted_files = extract_archive(
+                    destination, extraction_folder, archive_kind
+                )
+            except InterruptedError:
+                notify("Extraction cancelled. The archive was kept.")
+            except (
+                OSError, RuntimeError, zipfile.BadZipFile, zipfile.LargeZipFile
+            ) as exc:
+                log("Extraction failed: {}".format(exc), xbmc.LOGERROR)
+                notify("Extraction failed: {}".format(exc), error=True)
+        extracted_path = extraction_folder if extracted_files else ""
+        record_download(
+            identifier,
+            title,
+            filename,
+            destination,
+            downloaded,
+            system=system,
+            extracted_path=extracted_path,
+            extracted_files=extracted_files,
+            extraction_shared=extraction_shared,
+        )
+        if extracted_files and get_bool_setting("delete_archive_after_extract"):
+            try:
+                safe_delete_file(destination)
+            except RuntimeError as exc:
+                notify(str(exc), error=True)
+        if extracted_files:
+            notify("Downloaded and extracted {}".format(filename))
+        else:
+            notify("Downloaded {}".format(filename))
     except InterruptedError:
         notify("Download cancelled.")
         if xbmcvfs.exists(partial):
@@ -559,12 +1036,18 @@ def show_history():
     xbmcplugin.setPluginCategory(HANDLE, "Download history")
     xbmcplugin.setContent(HANDLE, "files")
     history = load_history()
-    for entry in history:
+    add_action("[B]Manage ROM folders[/B]", "folder_manager")
+    add_action("Clear missing history entries", "history_clear_missing")
+    add_action("Clear all history", "history_clear_all")
+    for index, entry in enumerate(history):
         stamp = entry.get("downloaded_at", "").replace("T", " ")[:16]
+        state = "Extracted" if entry.get("extracted_path") else "Downloaded"
         label2 = "  •  ".join(
             value
             for value in (
                 ia_client.format_size(entry.get("size", 0)),
+                entry.get("system", ""),
+                state,
                 stamp,
             )
             if value
@@ -573,20 +1056,117 @@ def show_history():
             entry.get("filename") or "Downloaded file",
             "history_item",
             label2=label2,
-            destination=entry.get("destination", ""),
-            identifier=entry.get("identifier", ""),
+            index=str(index),
         )
     if not history:
         notify("No downloads have been completed yet.")
     finish(view_mode=DB3_LIST_VIEW)
 
 
-def show_history_item(destination, identifier):
-    xbmcgui.Dialog().ok(
-        "Downloaded file",
-        destination or "The saved path is unavailable.",
-        ia_client.details_url(identifier) if identifier else "",
-    )
+def entry_archive_path(entry):
+    return entry.get("archive_path") or entry.get("destination") or ""
+
+
+def entry_has_files(entry):
+    archive = entry_archive_path(entry)
+    if path_exists(archive):
+        return True
+    extracted_files = entry.get("extracted_files") or []
+    if any(path_exists(path) for path in extracted_files):
+        return True
+    if entry.get("extraction_shared"):
+        return False
+    extracted = entry.get("extracted_path") or ""
+    return path_exists(extracted)
+
+
+def delete_extracted_entry(entry):
+    extracted = entry.get("extracted_path") or ""
+    files = entry.get("extracted_files") or []
+    if entry.get("extraction_shared"):
+        for path in files:
+            safe_delete_file(path)
+            cleanup_empty_parents(path, extracted)
+    elif extracted:
+        safe_delete_folder(extracted)
+    entry["extracted_path"] = ""
+    entry["extracted_files"] = []
+    entry["extraction_shared"] = False
+
+
+def show_history_item(index):
+    history = load_history()
+    try:
+        entry = history[int(index)]
+    except (IndexError, TypeError, ValueError):
+        notify("That history entry no longer exists.", error=True)
+        return
+    archive = entry_archive_path(entry)
+    extracted = entry.get("extracted_path") or ""
+    choices = ["Show file information"]
+    actions = ["info"]
+    if archive and path_exists(archive):
+        choices.append("Delete downloaded archive")
+        actions.append("archive")
+    if extracted or entry.get("extracted_files"):
+        choices.append("Delete extracted files")
+        actions.append("extracted")
+    if path_exists(archive) and (extracted or entry.get("extracted_files")):
+        choices.append("Delete archive and extracted files")
+        actions.append("both")
+    choices.append("Remove from history only")
+    actions.append("history")
+    selected = xbmcgui.Dialog().select(entry.get("filename") or "Downloaded file", choices)
+    if selected < 0:
+        return
+    action = actions[selected]
+    if action == "info":
+        details = [
+            "Archive: {}".format(archive or "Not recorded"),
+            "Extracted: {}".format(extracted or "No"),
+            "System: {}".format(entry.get("system") or "Other"),
+        ]
+        xbmcgui.Dialog().ok("Downloaded file", "\n".join(details))
+        return
+    if not xbmcgui.Dialog().yesno(
+        ADDON_NAME,
+        "Confirm {}?".format(choices[selected].lower()),
+    ):
+        return
+    try:
+        if action in ("archive", "both") and archive:
+            safe_delete_file(archive)
+            entry["archive_path"] = ""
+            entry["destination"] = ""
+        if action in ("extracted", "both"):
+            delete_extracted_entry(entry)
+        if action in ("history", "both") or not entry_has_files(entry):
+            history.pop(int(index))
+        save_history(history)
+        notify("Download history updated.")
+        xbmc.executebuiltin("Container.Refresh")
+    except RuntimeError as exc:
+        notify(str(exc), error=True)
+
+
+def clear_missing_history():
+    history = load_history()
+    remaining = [entry for entry in history if entry_has_files(entry)]
+    removed = len(history) - len(remaining)
+    save_history(remaining)
+    notify("Removed {} missing entr{}.".format(removed, "y" if removed == 1 else "ies"))
+    xbmc.executebuiltin("Container.Refresh")
+
+
+def clear_all_history():
+    if xbmcgui.Dialog().yesno(
+        ADDON_NAME,
+        "Clear all download history?",
+        "Downloaded and extracted files will be kept.",
+    ):
+        save_history([])
+        notify("Download history cleared.")
+        xbmc.executebuiltin("Container.Refresh")
 
 
 def route():
@@ -628,9 +1208,16 @@ def route():
     elif action == "history":
         show_history()
     elif action == "history_item":
-        show_history_item(
-            PARAMS.get("destination", ""), PARAMS.get("identifier", "")
-        )
+        show_history_item(PARAMS.get("index", ""))
+        finish()
+    elif action == "history_clear_missing":
+        clear_missing_history()
+        finish()
+    elif action == "history_clear_all":
+        clear_all_history()
+        finish()
+    elif action == "folder_manager":
+        folder_manager()
         finish()
     elif action == "settings":
         ADDON.openSettings()

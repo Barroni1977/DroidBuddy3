@@ -1,0 +1,13 @@
+[B]0.3.0[/B]
+• Added Download and Extract for ZIP, RAR and 7z archives
+• Added safe native ZIP extraction with overwrite, storage and path-traversal checks
+• Added optional Kodi VFS Archive Support integration for RAR and 7z
+• Added automatic system folders and per-system destination memory
+• Added create, rename, repair and empty-folder deletion tools
+• Added archive/extracted-file tracking and deletion from Download History
+• Added clear-missing and clear-history actions
+• Existing download history remains compatible
+
+[B]0.2.5[/B]
+• Search results remain in navigation history
+• All downloadable item files are shown by default
