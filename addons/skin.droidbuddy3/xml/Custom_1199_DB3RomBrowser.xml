@@ -128,7 +128,7 @@
 				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
 				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
 				<onclick>ActivateWindow(programs,plugin://plugin.program.db3roms/?action=homebrew,return)</onclick>
-				<onup>799</onup><onleft>5903</onleft><onright>5902</onright><ondown>5904</ondown>
+				<onup>799</onup><onleft>5903</onleft><onright>5902</onright><ondown>5906</ondown>
 			</control>
 			<control type="button" id="5902">
 				<left>710</left><top>188</top><width>500</width><height>300</height>
@@ -147,20 +147,28 @@
 				<onup>798</onup><onleft>5902</onleft><onright>5901</onright><ondown>5905</ondown>
 			</control>
 			<control type="button" id="5904">
-				<left>435</left><top>530</top><width>500</width><height>300</height>
+				<left>710</left><top>530</top><width>500</width><height>300</height>
 				<label></label>
 				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
 				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
 				<onclick>ActivateWindow(programs,plugin://plugin.program.db3roms/?action=history,return)</onclick>
-				<onup>5901</onup><onleft>5905</onleft><onright>5905</onright><ondown>5901</ondown>
+				<onup>5902</onup><onleft>5906</onleft><onright>5905</onright><ondown>5902</ondown>
 			</control>
 			<control type="button" id="5905">
-				<left>985</left><top>530</top><width>500</width><height>300</height>
+				<left>1260</left><top>530</top><width>500</width><height>300</height>
 				<label></label>
 				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
 				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
 				<onclick>Addon.OpenSettings(plugin.program.db3roms)</onclick>
-				<onup>5903</onup><onleft>5904</onleft><onright>5904</onright><ondown>5902</ondown>
+				<onup>5903</onup><onleft>5904</onleft><onright>5906</onright><ondown>5903</ondown>
+			</control>
+			<control type="button" id="5906">
+				<left>160</left><top>530</top><width>500</width><height>300</height>
+				<label></label>
+				<textcolor>white</textcolor><focusedcolor>DroidNavy</focusedcolor>
+				<texturefocus>droidbuddy3/settings-card-focus.png</texturefocus><texturenofocus>droidbuddy3/settings-card.png</texturenofocus>
+				<onclick>ActivateWindow(programs,plugin://plugin.program.db3roms/?action=library,return)</onclick>
+				<onup>5901</onup><onleft>5905</onleft><onright>5904</onright><ondown>5901</ondown>
 			</control>
 			<control type="image"><left>346</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">droidbuddy3/settings-icons/games.png</texture><visible>!Control.HasFocus(5901)</visible></control>
 			<control type="image"><left>346</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">droidbuddy3/settings-icons/games.png</texture><visible>Control.HasFocus(5901)</visible></control>
@@ -168,10 +176,12 @@
 			<control type="image"><left>896</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">droidbuddy3/settings-icons/addons.png</texture><visible>Control.HasFocus(5902)</visible></control>
 			<control type="image"><left>1446</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">icons/search.png</texture><visible>!Control.HasFocus(5903)</visible></control>
 			<control type="image"><left>1446</left><top>236</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">icons/search.png</texture><visible>Control.HasFocus(5903)</visible></control>
-			<control type="image"><left>563</left><top>524</top><width>245</width><height>225</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">icons/sidemenu/download.png</texture><visible>!Control.HasFocus(5904)</visible></control>
-			<control type="image"><left>563</left><top>524</top><width>245</width><height>225</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">icons/sidemenu/download.png</texture><visible>Control.HasFocus(5904)</visible></control>
-			<control type="image"><left>1171</left><top>578</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">droidbuddy3/settings-icons/system.png</texture><visible>!Control.HasFocus(5905)</visible></control>
-			<control type="image"><left>1171</left><top>578</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">droidbuddy3/settings-icons/system.png</texture><visible>Control.HasFocus(5905)</visible></control>
+			<control type="image"><left>838</left><top>524</top><width>245</width><height>225</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">icons/sidemenu/download.png</texture><visible>!Control.HasFocus(5904)</visible></control>
+			<control type="image"><left>838</left><top>524</top><width>245</width><height>225</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">icons/sidemenu/download.png</texture><visible>Control.HasFocus(5904)</visible></control>
+			<control type="image"><left>1446</left><top>578</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">droidbuddy3/settings-icons/system.png</texture><visible>!Control.HasFocus(5905)</visible></control>
+			<control type="image"><left>1446</left><top>578</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">droidbuddy3/settings-icons/system.png</texture><visible>Control.HasFocus(5905)</visible></control>
+			<control type="image"><left>346</left><top>578</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidCyan">droidbuddy3/settings-icons/games.png</texture><visible>!Control.HasFocus(5906)</visible></control>
+			<control type="image"><left>346</left><top>578</top><width>128</width><height>116</height><aspectratio>keep</aspectratio><texture colordiffuse="DroidNavy">droidbuddy3/settings-icons/games.png</texture><visible>Control.HasFocus(5906)</visible></control>
 			<!-- Labels are separate from buttons so Android cannot alter their vertical alignment. -->
 			<control type="label"><left>160</left><top>375</top><width>500</width><height>58</height><label>HOMEBREW</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5901)</visible></control>
 			<control type="label"><left>160</left><top>375</top><width>500</width><height>58</height><label>HOMEBREW</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5901)</visible></control>
@@ -179,10 +189,12 @@
 			<control type="label"><left>710</left><top>375</top><width>500</width><height>58</height><label>PUBLIC DOMAIN</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5902)</visible></control>
 			<control type="label"><left>1260</left><top>375</top><width>500</width><height>58</height><label>SEARCH ARCHIVE</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5903)</visible></control>
 			<control type="label"><left>1260</left><top>375</top><width>500</width><height>58</height><label>SEARCH ARCHIVE</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5903)</visible></control>
-			<control type="label"><left>435</left><top>717</top><width>500</width><height>58</height><label>DOWNLOAD HISTORY</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5904)</visible></control>
-			<control type="label"><left>435</left><top>717</top><width>500</width><height>58</height><label>DOWNLOAD HISTORY</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5904)</visible></control>
-			<control type="label"><left>985</left><top>717</top><width>500</width><height>58</height><label>SETTINGS</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5905)</visible></control>
-			<control type="label"><left>985</left><top>717</top><width>500</width><height>58</height><label>SETTINGS</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5905)</visible></control>
+			<control type="label"><left>710</left><top>717</top><width>500</width><height>58</height><label>DOWNLOAD HISTORY</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5904)</visible></control>
+			<control type="label"><left>710</left><top>717</top><width>500</width><height>58</height><label>DOWNLOAD HISTORY</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5904)</visible></control>
+			<control type="label"><left>1260</left><top>717</top><width>500</width><height>58</height><label>SETTINGS</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5905)</visible></control>
+			<control type="label"><left>1260</left><top>717</top><width>500</width><height>58</height><label>SETTINGS</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5905)</visible></control>
+			<control type="label"><left>160</left><top>717</top><width>500</width><height>58</height><label>MY GAMES</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>white</textcolor><visible>!Control.HasFocus(5906)</visible></control>
+			<control type="label"><left>160</left><top>717</top><width>500</width><height>58</height><label>MY GAMES</label><font>font30_title</font><align>center</align><aligny>center</aligny><textcolor>DroidNavy</textcolor><visible>Control.HasFocus(5906)</visible></control>
 			<control type="image"><left>130</left><top>954</top><width>520</width><height>2</height><texture colordiffuse="6600D9FF">colors/white.png</texture></control>
 			<control type="label"><left>650</left><top>931</top><width>620</width><height>48</height><label>INTERNET ARCHIVE  •  LEGAL HOMEBREW &amp; PUBLIC DOMAIN</label><font>font10</font><align>center</align><aligny>center</aligny><textcolor>grey</textcolor></control>
 			<control type="image"><left>1270</left><top>954</top><width>520</width><height>2</height><texture colordiffuse="6600D9FF">colors/white.png</texture></control>

@@ -1,3 +1,8 @@
+[B]1.10.0[/B]
+• Added a My Games card to the DB3 ROM Browser launcher
+• Rebalanced the launcher into a consistent three-by-two grid
+• Requires DB3 ROM Browser 0.3.1 for automatic system and game listings
+
 [B]1.9.4[/B]
 • Keeps the Internet Archive signed-in indicator in sync when the DB3 window opens or returns from settings
 

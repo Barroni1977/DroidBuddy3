@@ -30,7 +30,7 @@ ADDON_ICON = ADDON.getAddonInfo("icon")
 HANDLE = int(sys.argv[1])
 BASE_URL = sys.argv[0]
 PARAMS = dict(parse_qsl(sys.argv[2][1:] if len(sys.argv) > 2 else ""))
-USER_AGENT = "DB3-ROM-Browser/0.3.0 Kodi"
+USER_AGENT = "DB3-ROM-Browser/0.3.1 Kodi"
 DB3_SKIN_ID = "skin.droidbuddy3"
 DB3_LIST_VIEW = 55
 DB3_WINDOW_ID = 1199
@@ -1032,6 +1032,148 @@ def download(identifier, filename, title, expected_size=0):
         progress.close()
 
 
+def scan_game_files(folder, stop_after_one=False):
+    root = xbmcvfs.translatePath(download_folder())
+    local_folder = xbmcvfs.translatePath(folder)
+    if not storage.is_within(root, local_folder):
+        return []
+    results = []
+    stack = [(folder, "")]
+    visited = set()
+    while stack:
+        current, relative_root = stack.pop()
+        local_current = os.path.realpath(xbmcvfs.translatePath(current))
+        if local_current in visited or not storage.is_within(root, local_current):
+            continue
+        visited.add(local_current)
+        try:
+            directories, files = xbmcvfs.listdir(current)
+        except Exception as exc:
+            log("Could not scan {}: {}".format(current, exc), xbmc.LOGWARNING)
+            continue
+        for filename in files:
+            if not storage.is_game_file(filename):
+                continue
+            path = join_vfs(current, filename)
+            relative = "/".join(
+                value for value in (relative_root, filename) if value
+            )
+            try:
+                size = int(xbmcvfs.Stat(path).st_size())
+            except Exception:
+                size = 0
+            results.append({"path": path, "relative": relative, "size": size})
+            if stop_after_one:
+                return results
+        for dirname in reversed(directories):
+            name = dirname.rstrip("/\\")
+            if not name or name in (".", ".."):
+                continue
+            relative = "/".join(
+                value for value in (relative_root, name) if value
+            )
+            stack.append((join_vfs(current, name), relative))
+    return sorted(results, key=lambda item: item["relative"].lower())
+
+
+def show_game_library():
+    xbmcplugin.setPluginCategory(HANDLE, "My Games")
+    xbmcplugin.setContent(HANDLE, "files")
+    root, names = managed_folders()
+    found = False
+    for name in names:
+        folder = join_vfs(root, name)
+        if not scan_game_files(folder, stop_after_one=True):
+            continue
+        found = True
+        add_folder(
+            name,
+            "library_system",
+            label2="Games available",
+            folder=folder,
+            system=name,
+        )
+    if not found:
+        notify("No downloaded games were found in your system folders.")
+    finish(view_mode=DB3_LIST_VIEW)
+
+
+def show_game_system(folder, system):
+    xbmcplugin.setPluginCategory(HANDLE, system or "My Games")
+    xbmcplugin.setContent(HANDLE, "files")
+    files = scan_game_files(folder)
+    for entry in files:
+        kind = storage.archive_type(entry["relative"])
+        details = [ia_client.format_size(entry["size"])]
+        if kind:
+            details.append("{} archive".format(kind.upper()))
+        add_action(
+            entry["relative"],
+            "library_item",
+            label2="  •  ".join(details),
+            path=entry["path"],
+            system=system,
+        )
+    if not files:
+        notify("No game files were found in {}.".format(system or "this folder"))
+    finish(view_mode=DB3_LIST_VIEW)
+
+
+def show_game_item(path, system):
+    root = xbmcvfs.translatePath(download_folder())
+    if not storage.is_within(root, xbmcvfs.translatePath(path)):
+        notify("That game is outside the managed ROM Library.", error=True)
+        return
+    kind = storage.archive_type(path)
+    choices = ["File information"]
+    actions = ["info"]
+    if kind:
+        choices.append("Extract archive")
+        actions.append("extract")
+    choices.append("Delete game file")
+    actions.append("delete")
+    selected = xbmcgui.Dialog().select(os.path.basename(path), choices)
+    if selected < 0:
+        return
+    action = actions[selected]
+    if action == "info":
+        try:
+            size = int(xbmcvfs.Stat(path).st_size())
+        except Exception:
+            size = 0
+        xbmcgui.Dialog().ok(
+            os.path.basename(path),
+            "System: {}\nSize: {}\nPath: {}".format(
+                system or "Other", ia_client.format_size(size), path
+            ),
+        )
+        return
+    if action == "extract":
+        target = join_vfs(
+            os.path.dirname(path), storage.archive_folder_name(path)
+        )
+        try:
+            extracted = extract_archive(path, target, kind)
+            notify("Extracted {} file(s).".format(len(extracted)))
+            xbmc.executebuiltin("Container.Refresh")
+        except InterruptedError:
+            notify("Extraction cancelled.")
+        except (OSError, RuntimeError, zipfile.BadZipFile, zipfile.LargeZipFile) as exc:
+            notify("Extraction failed: {}".format(exc), error=True)
+        return
+    if xbmcgui.Dialog().yesno(
+        ADDON_NAME,
+        "Delete {}?".format(os.path.basename(path)),
+        "This cannot be undone.",
+    ):
+        try:
+            safe_delete_file(path)
+            notify("Game file deleted.")
+            xbmc.executebuiltin("Container.Refresh")
+        except RuntimeError as exc:
+            notify(str(exc), error=True)
+
+
 def show_history():
     xbmcplugin.setPluginCategory(HANDLE, "Download history")
     xbmcplugin.setContent(HANDLE, "files")
@@ -1207,6 +1349,19 @@ def route():
         finish()
     elif action == "history":
         show_history()
+    elif action == "library":
+        show_game_library()
+    elif action == "library_system":
+        show_game_system(
+            PARAMS.get("folder", ""),
+            PARAMS.get("system", ""),
+        )
+    elif action == "library_item":
+        show_game_item(
+            PARAMS.get("path", ""),
+            PARAMS.get("system", ""),
+        )
+        finish()
     elif action == "history_item":
         show_history_item(PARAMS.get("index", ""))
         finish()

@@ -26,6 +26,13 @@ class StorageHelpersTest(unittest.TestCase):
         self.assertEqual(storage.archive_type("Game.chd"), "")
         self.assertEqual(storage.archive_folder_name("Game (USA).7z"), "Game (USA)")
 
+    def test_game_library_recognises_console_files(self):
+        self.assertTrue(storage.is_game_file("Sonic The Hedgehog.md"))
+        self.assertTrue(storage.is_game_file("Crisis Core.cso"))
+        self.assertTrue(storage.is_game_file("Collection.zip"))
+        self.assertFalse(storage.is_game_file("cover.jpg"))
+        self.assertFalse(storage.is_game_file("notes.txt"))
+
     def test_archive_members_cannot_escape_destination(self):
         self.assertEqual(storage.safe_archive_member("folder/game.rom"), "folder/game.rom")
         self.assertEqual(storage.safe_archive_member("../outside.rom"), "")

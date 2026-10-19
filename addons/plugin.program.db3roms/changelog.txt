@@ -1,3 +1,8 @@
+[B]0.3.1[/B]
+• Added My Games, which automatically shows system folders containing downloaded games
+• Selecting a system now opens its complete game-file list
+• Added file information, archive extraction and safe deletion actions for library entries
+
 [B]0.3.0[/B]
 • Added Download and Extract for ZIP, RAR and 7z archives
 • Added safe native ZIP extraction with overwrite, storage and path-traversal checks
